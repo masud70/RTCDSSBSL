@@ -21,8 +21,8 @@ io.on('connection', (socket) => {
     })
 
     setTimeout(()=>{
-        io.emit("mmm", {data: "Masud"})
-    }, 5000)
+        io.emit("mmm", {data: "Data Updated"})
+    }, 6000)
 
     socket.on("msg", (data) => {
         console.log(data);

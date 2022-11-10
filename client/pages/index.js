@@ -4,22 +4,20 @@ import {io} from 'socket.io-client';
 const socket = io("http://localhost:5000", {transports: ['websocket']})
 
 export default function index() {
-  const [name, setName] = useState("Nishat");
-  const handlePost = () => {
-    socket.emit("msg", {post: name});
-  }
-  socket.on("mmm", (data)=>{
-    setName(data.data);
-  })
-  
+    const [name, setName] = useState("Nishat");
+    const handlePost = () => {
+        socket.emit("msg", {post: name});
+    }
+    socket.on("mmm", (data)=>{
+        setName(data.data);
+    })
+    
 
-  return (
-    <>
-      <div style={{margin: 50}}>
-        <h1>{name}</h1>
-        <input type="text" onChange={e=>setName(e.target.value)} />
-        <button onClick={handlePost} >Post Now</button>
-      </div>
-    </>
-  )
+    return (
+        <>
+            <div className=' bg-gray-200 h-screen'>
+                Homepage
+            </div>
+        </>
+    )
 }
