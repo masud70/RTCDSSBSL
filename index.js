@@ -1,6 +1,7 @@
 const app = require('express')();
 const server = require('http').createServer(app);
 const db = require('./connectivity/mySql');
+require('dotenv').config();
 
 const io = require('socket.io')(server, {
     cors: {
@@ -33,6 +34,6 @@ io.on('connection', (socket) => {
     })
  });
 
-server.listen(5000, ()=>{
-    console.log("Server running!");
+server.listen(process.env.PORT, ()=>{
+    console.log("Server running @ " + process.env.PORT);
 });
