@@ -1,5 +1,7 @@
 const app = require('express')();
 const server = require('http').createServer(app);
+const db = require('./connectivity/mySql');
+
 const io = require('socket.io')(server, {
     cors: {
       origin: "https://localhost:3000",
@@ -12,7 +14,9 @@ app.get('/server', (req, res)=>{
     res.send("This is backend!");
 })
 
-
+db.query("SELECT * FROM user", (e, r, f)=>{
+    console.log(r)
+})
 
 io.on('connection', (socket) => { 
     console.log("User Connected!!");
