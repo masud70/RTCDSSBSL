@@ -11,9 +11,10 @@
   "dependencies": {
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
+    "@fontsource/roboto": "^4.5.8",
     "@mui/icons-material": "^5.10.14",
     "@mui/lab": "^5.0.0-alpha.108",
-    "@mui/material": "^5.10.14",
+    "@mui/material": "^5.10.16",
     "@mui/x-data-grid": "^5.17.11",
     "eslint": "8.26.0",
     "eslint-config-next": "13.0.1",
