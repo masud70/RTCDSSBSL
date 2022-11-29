@@ -1,5 +1,5 @@
+import Image from "next/image";
 import React, { useEffect, useState } from "react";
-import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import LoadingButton from "@mui/lab/LoadingButton";
 import LoginIcon from "@mui/icons-material/Login";
@@ -8,7 +8,7 @@ import { useRouter } from "next/router";
 import { useSnackbar } from "notistack";
 import { login } from "../../actions/login";
 
-export default function Index() {
+const index = () => {
     const [loading, setLoading] = React.useState(false);
     const [phone, setPhone] = useState("");
     const [password, setPassword] = useState("");
@@ -55,65 +55,70 @@ export default function Index() {
 
     return (
         <>
-            <div className=" bg-slate-400 h-screen absolute top-0 w-full flex text-center justify-center align-middle items-center">
-                <div className=" bg-slate-200 w-4/6 h-3/6 md:w-2/6 md:h-3/6 rounded-xl p-3 shadow-xl">
-                    <div className="h-full bg-slate-600">
-                        <div className="h-1/4 grid justify-center items-center text-slate-300">
-                            <div className=" font-bold text-4xl h-full justify-center items-center flex">
-                                RTCDSS-BSL
-                            </div>
-                            <div className="h-full justify-center items-center font-bold flex text-3xl">
-                                SIGN IN
-                            </div>
-                        </div>
-                        <div className="h-2/4 justify-center align-middle items-center flex">
-                            <Box
-                                component="form"
-                                sx={{
-                                    "& .MuiTextField-root": {
-                                        m: 1,
-                                        width: "30ch",
-                                    },
-                                }}
-                                noValidate
-                                autoComplete="off"
-                            >
-                                <div className="">
-                                    <TextField
-                                        value={phone}
-                                        onChange={(e) =>
-                                            onChangePhone(e.target.value)
-                                        }
-                                        label="Phone"
-                                        id="outlined-size-small"
-                                        size="small"
-                                    />
-                                    <TextField
-                                        value={password}
-                                        onChange={(e) =>
-                                            onPasswordChange(e.target.value)
-                                        }
-                                        label="Password"
-                                        id="outlined-size-small"
-                                        size="small"
+            <div className="absolute top-0 bg-slate-200 h-screen w-screen flex items-center justify-center  shadow-xl">
+                <div className="w-1/2 md:w-3/4 h-3/4 flex flex-row justify-between">
+                    <div className="hidden md:flex w-full justify-center items-center overflow-hidden rounded-l-xl">
+                        <Image
+                            src="/images/gif.gif"
+                            width={100}
+                            height={100}
+                            className="w-full min-h-full bg-cover"
+                        />
+                    </div>
+                    <div className="bg-slate-300 w-full flex justify-center items-center rounded-xl md:rounded-r-xl md:rounded-l-none">
+                        <div className="flex justify-center items-center flex-col space-y-8 w-full">
+                            <div className="flex justify-center items-center flex-col">
+                                <div className="flex justify-center items-center">
+                                    <Image
+                                        src="/images/logo-bd.png"
+                                        width={100}
+                                        height={100}
                                     />
                                 </div>
-                            </Box>
-                        </div>
-                        <div className="h-1/4 pt-2 bg-slate-4009">
-                            <LoadingButton
-                                onClick={handleClick}
-                                endIcon={<LoginIcon />}
-                                loading={loading}
-                                loadingPosition="end"
-                                variant="contained"
-                            >
-                                Login
-                            </LoadingButton>
+                                <div className="font-bold text-3xl text-gray-800">
+                                    WELCOME
+                                </div>
+                            </div>
+                            <div className="w-3/4 space-y-3 items-center justify-center flex flex-col">
+                                <TextField
+                                    id="fullWidth"
+                                    label="Phone"
+                                    variant="outlined"
+                                    fullWidth
+                                    className="w-full"
+                                    value={phone}
+                                    onChange={(e) =>
+                                        onChangePhone(e.target.value)
+                                    }
+                                />
+                                <TextField
+                                    id="fullWidth"
+                                    label="Password"
+                                    variant="outlined"
+                                    fullWidth
+                                    className="w-full"
+                                    value={password}
+                                    onChange={(e) =>
+                                        onPasswordChange(e.target.value)
+                                    }
+                                />
+                                <LoadingButton
+                                    onClick={handleClick}
+                                    endIcon={<LoginIcon />}
+                                    loading={loading}
+                                    loadingPosition="end"
+                                    variant="contained"
+                                    className="bg-dark"
+                                >
+                                    LOGIN
+                                </LoadingButton>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </>
     );
-}
+};
+
+export default index;

@@ -26,6 +26,10 @@ io.on("connection", (socket) => {
     socket.on("msg", (data) => {
         console.log(data);
     });
+
+    socket.on("send", (data) => {
+        console.log(data);
+    });
 });
 
 server.listen(process.env.PORT, () => {
