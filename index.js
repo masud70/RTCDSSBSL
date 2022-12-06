@@ -14,17 +14,9 @@ app.get("/server", (req, res) => {
 });
 
 io.on("connection", (socket) => {
-    console.log("User Connected!!");
+    console.log("User Connected with id " + socket.id);
     socket.on("disconnect", () => {
-        console.log("Disconnected!!!");
-    });
-
-    setTimeout(() => {
-        io.emit("mmm", { data: "Data Updated" });
-    }, 6000);
-
-    socket.on("msg", (data) => {
-        console.log(data);
+        console.log(socket.id + " disconnected!!!");
     });
 
     socket.on("send", (data) => {
