@@ -1,5 +1,5 @@
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import TextField from "@mui/material/TextField";
 import LoadingButton from "@mui/lab/LoadingButton";
 import LoginIcon from "@mui/icons-material/Login";
@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/router";
 import { useSnackbar } from "notistack";
 import { login } from "../../actions/login";
+import { SocketContext } from "../socketContext";
 
 const index = () => {
     const [loading, setLoading] = React.useState(false);
@@ -14,6 +15,7 @@ const index = () => {
     const [password, setPassword] = useState("");
     const isLogged = useSelector((state) => state.logger);
     const { enqueueSnackbar } = useSnackbar();
+    const socket = useContext(SocketContext);
     const dispatch = useDispatch();
     const router = useRouter();
 
@@ -21,7 +23,6 @@ const index = () => {
         enqueueSnackbar(message, { variant });
     };
     const handleClick = () => {
-        if (phone.length < 1 || password.length < 4) return;
         setLoading((state) => !state);
         dispatch(login(phone, password));
     };
@@ -37,6 +38,12 @@ const index = () => {
     };
     const onPasswordChange = (val) => {
         if (val.length <= 15) setPassword(val);
+    };
+
+    const onSubmit = () => {
+        if (phone.length < 1 || password.length < 4) return;
+        setLoading((state) => !state);
+        socket.emit("login", { phone, password });
     };
 
     useEffect(() => {
@@ -103,7 +110,7 @@ const index = () => {
                                     }
                                 />
                                 <LoadingButton
-                                    onClick={handleClick}
+                                    onClick={onSubmit}
                                     endIcon={<LoginIcon />}
                                     loading={loading}
                                     loadingPosition="end"

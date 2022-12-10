@@ -7,10 +7,15 @@ import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a lo
 import { Carousel } from "react-responsive-carousel";
 import Posts from "../components/Posts";
 import Marquee from "react-fast-marquee";
+import LoadingButton from "@mui/lab/LoadingButton";
 
 export default function index() {
     const [name, setName] = useState("Nishat");
     const dispatch = useDispatch();
+    const [loading, setLoading] = React.useState(false);
+    const handleClick = () => {
+        setLoading(true);
+    };
 
     useEffect(() => {
         const socket = io("http://localhost:5000", {
@@ -54,11 +59,24 @@ export default function index() {
                     </div>
                 </div>
                 <div className="flex flex-col md:flex-row space-y-2 md:space-x-2">
-                    <div className="w-full md:w-4/6 bg-white mt-2 p-2 max-h-screen overflow-auto">
+                    <div
+                        className="w-full md:w-4/6 bg-white mt-2 p-2 max-h-screen overflow-auto space-y-4"
+                        style={{}}
+                    >
                         <Posts />
                         <Posts />
                         <Posts />
                         <Posts />
+                        <div className="w-full items-center justify-center flex">
+                            <LoadingButton
+                                size="small"
+                                onClick={handleClick}
+                                loading={loading}
+                                variant="outlined"
+                            >
+                                Load More
+                            </LoadingButton>
+                        </div>
                     </div>
                     <div className="w-full md:w-2/6 flex flex-col space-y-2">
                         <div className="w-full bg-slate-400 rounded">
