@@ -1,14 +1,16 @@
-import { configureStore } from "@reduxjs/toolkit";
-import authSlice from "../state/auth/authSlice";
-import socketSlice from "../state/webSocket/socketSlice";
+import { configureStore } from '@reduxjs/toolkit';
+import authSlice from '../state/auth/authSlice';
+import commonSlice from '../state/common/commonSlice';
+import socketSlice from '../state/webSocket/socketSlice';
 
 export default configureStore({
     reducer: {
         socket: socketSlice,
         auth: authSlice,
+        common: commonSlice
     },
-    middleware: (getDefaultMiddleware) =>
+    middleware: getDefaultMiddleware =>
         getDefaultMiddleware({
-            serializableCheck: false,
-        }),
+            serializableCheck: false
+        })
 });

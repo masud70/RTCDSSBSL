@@ -1,8 +1,4 @@
-import React, { useEffect, useState } from "react";
-import { io } from "socket.io-client";
-import { useDispatch, useSelector } from "react-redux";
-import { login } from "../actions/login";
-import { setWebSocket } from "../redux/state/webSocket/socketSlice";
+import React from "react";
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 import { Carousel } from "react-responsive-carousel";
 import Posts from "../components/Posts";
@@ -10,18 +6,10 @@ import Marquee from "react-fast-marquee";
 import LoadingButton from "@mui/lab/LoadingButton";
 
 export default function index() {
-    const [name, setName] = useState("Nishat");
-    const dispatch = useDispatch();
     const [loading, setLoading] = React.useState(false);
     const handleClick = () => {
         setLoading(true);
     };
-
-    useEffect(() => {
-        const socket = io("http://localhost:5000", {
-            transports: ["websocket"],
-        });
-    }, []);
 
     return (
         <>
