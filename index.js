@@ -5,10 +5,12 @@ const path = require("path");
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 const app = express();
+const cors = require("cors");
 const server = require("http").createServer(app);
 dotenv.config();
 
 //request parsers
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -26,8 +28,12 @@ const {
     errorHandler,
 } = require("./middlewares/common/errorHandler");
 const userRouter = require("./router/userRouter");
+const employeeRouter = require("./router/employeeRouter");
 const { checkLogin } = require("./middlewares/common/checkLogin");
 const { upload } = require("./middlewares/common/imageUpload");
+const {
+    dataChecker,
+} = require("./socketRouteHandler/employeeDataChecker/checker");
 
 // socket connection
 const io = require("socket.io")(server, {
@@ -35,6 +41,10 @@ const io = require("socket.io")(server, {
         origin: "https://localhost:3000",
         methods: ["GET", "POST"],
     },
+});
+app.use((req, res, next) => {
+    req.io = io;
+    return next();
 });
 
 //database connection
@@ -53,6 +63,7 @@ mongoose
 //routing setup
 //signup router
 app.use("/user", userRouter);
+app.use("/employee", employeeRouter);
 
 app.get("/", checkLogin, (req, res) => {
     console.log(req.body);
@@ -75,17 +86,14 @@ app.use(notFoundHandler);
 app.use(errorHandler);
 
 io.on("connection", (socket) => {
-    console.log("User Connected with id " + socket.id);
+    // console.log("User Connected with id " + socket.id);
     socket.on("disconnect", () => {
         console.log(socket.id + " disconnected!!!");
     });
 
-    socket.on("send", (data) => {
-        console.log(data);
-    });
-
-    socket.on("login", (user) => {
-        console.log(user);
+    socket.on("employeeDataChecking", async (data) => {
+        const result = await dataChecker(data);
+        socket.emit("employeeDataCheckingResult", result);
     });
 });
 

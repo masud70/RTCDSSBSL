@@ -1,18 +1,19 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import { TextField } from '@mui/material';
+import TextField from '@mui/material/TextField';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { useDispatch, useSelector } from 'react-redux';
 import { addEmployeeModalToggle } from '../../../redux/state/common/commonSlice';
-import { SocketContext } from '../../socketContext';
 import axios from 'axios';
+import dayjs from 'dayjs';
+import swal from 'sweetalert';
 
 const visible = [
     [0, 0],
@@ -21,12 +22,15 @@ const visible = [
 ];
 
 export default function AddEmployee() {
-    const [value, setValue] = useState(null);
     const openModal = useSelector(state => state.common.isAddEmployeeModalOpen);
-    const socket = useContext(SocketContext);
     const dispatch = useDispatch();
     const [timer, setTimer] = useState(null);
     const [visibility, setVisibility] = useState([0, 1, 1]);
+    const [formData, setFormData] = useState({
+        dob: dayjs().format('MM/DD/YYYY'),
+        currentOfficeJoinDate: dayjs().format('MM/DD/YYYY'),
+        dateOfPRL: dayjs().format('MM/DD/YYYY')
+    });
 
     const handleClose = () => {
         dispatch(addEmployeeModalToggle());
@@ -72,65 +76,129 @@ export default function AddEmployee() {
         console.log('Visibility', visibility);
         return vis;
     };
+    const submitForm = () => {
+        console.log(formData);
+        axios
+            .post(process.env.BASE_URL + '/employee/register', formData)
+            .then(res => {
+                console.log(res);
+                swal(res.data.message, {
+                    icon: res.data.status ? 'success' : 'error'
+                });
+                handleClose();
+            })
+            .catch(err => {
+                console.log(err);
+                swal(err.message, { icon: 'error' });
+                handleClose();
+            });
+    };
 
     return (
         <>
             <Dialog
                 open={openModal}
                 onClose={handleClose}
-                fullWidth={'sm'}
+                // fullWidth={'sm'}
                 maxWidth={'sm'}
                 aria-labelledby="scroll-dialog-title"
                 aria-describedby="scroll-dialog-description">
-                <DialogTitle
-                    id="scroll-dialog-title"
-                    className="w-full items-center flex justify-center font-bold">
+                <DialogTitle className="w-full items-center flex justify-center font-bold">
                     Add New Employee
                 </DialogTitle>
                 <DialogContent>
-                    <DialogContentText
-                        id="scroll-dialog-description"
-                        tabIndex={-1}>
+                    <DialogContentText tabIndex={-1}>
                         <form
                             onSubmit={e => console.log(e)}
                             className="my-2 space-y-2">
                             <TextField
                                 className="w-full"
-                                id="nameBn"
                                 label="Name Bangla"
-                                hidden={visibility[0]}
+                                id="nameBn"
+                                // hidden={visibility[0]}
                                 onChange={e => {
-                                    handleChange({
-                                        type: 'nameBn',
-                                        value: e.target.value,
-                                        idx: { i: 0, j: 0, v: 1 }
-                                    });
+                                    const { id, value } = e.target;
+                                    setFormData(pre => ({
+                                        ...pre,
+                                        [id]: value
+                                    }));
+                                    // handleChange({
+                                    //     type: 'nameBn',
+                                    //     value: e.target.value,
+                                    //     idx: { i: 0, j: 0, v: 1 }
+                                    // });
                                 }}
                             />
                             <TextField
                                 className="w-full"
                                 id="nameEn"
                                 label="Name English"
-                                hidden={visibility[0]}
+                                // hidden={visibility[0]}
                                 onChange={e => {
-                                    handleChange({
-                                        type: 'nameEn',
-                                        value: e.target.value,
-                                        idx: { i: 0, j: 1, v: 1 }
-                                    });
+                                    const { id, value } = e.target;
+                                    setFormData(pre => ({
+                                        ...pre,
+                                        [id]: value
+                                    }));
+                                    // handleChange({
+                                    //     type: 'nameEn',
+                                    //     value: e.target.value,
+                                    //     idx: { i: 0, j: 1, v: 1 }
+                                    // });
                                 }}
                             />
                             <TextField
                                 className="w-full"
                                 id="email"
                                 label="Email Address"
-                                hidden={visibility[1]}
+                                // hidden={visibility[1]}
                                 onChange={e => {
-                                    handleChange({
-                                        type: 'email',
-                                        value: e.target.value,
-                                        idx: { i: 1, j: 0, v: 1 }
-                                    });
+                                    const { id, value } = e.target;
+                                    setFormData(pre => ({
+                                        ...pre,
+                                        [id]: value
+                                    }));
+                                    // handleChange({
+                                    //     type: 'email',
+                                    //     value: e.target.value,
+                                    //     idx: { i: 1, j: 0, v: 1 }
+                                    // });
+                                }}
+                            />
+                            <TextField
+                                className="w-full"
+                                id="mobile"
+                                label="Mobile"
+                                onChange={e => {
+                                    const { id, value } = e.target;
+                                    setFormData(pre => ({
+                                        ...pre,
+                                        [id]: value
+                                    }));
+                                }}
+                            />
+                            <TextField
+                                className="w-full"
+                                id="designation"
+                                label="পদবী"
+                                onChange={e => {
+                                    const { id, value } = e.target;
+                                    setFormData(pre => ({
+                                        ...pre,
+                                        [id]: value
+                                    }));
+                                }}
+                            />
+                            <TextField
+                                className="w-full"
+                                id="currentOffice"
+                                label="Current Office"
+                                onChange={e => {
+                                    const { id, value } = e.target;
+                                    setFormData(pre => ({
+                                        ...pre,
+                                        [id]: value
+                                    }));
                                 }}
                             />
                             <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -138,9 +206,47 @@ export default function AddEmployee() {
                                     className="w-full"
                                     id="dob"
                                     label="Date of Birth"
-                                    value={value}
-                                    onChange={newValue => {
-                                        setValue(newValue);
+                                    value={formData.dob}
+                                    onChange={val => {
+                                        setFormData(pre => ({
+                                            ...pre,
+                                            dob: val.format('MM/DD/YYYY')
+                                        }));
+                                    }}
+                                    renderInput={params => (
+                                        <TextField {...params} />
+                                    )}
+                                />
+                            </LocalizationProvider>
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <DatePicker
+                                    className="w-full"
+                                    id="currentOfficeJoinDate"
+                                    label="Current Office Join Date"
+                                    value={formData.currentOfficeJoinDate}
+                                    onChange={val => {
+                                        setFormData(pre => ({
+                                            ...pre,
+                                            currentOfficeJoinDate:
+                                                val.format('MM/DD/YYYY')
+                                        }));
+                                    }}
+                                    renderInput={params => (
+                                        <TextField {...params} />
+                                    )}
+                                />
+                            </LocalizationProvider>
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <DatePicker
+                                    className="w-full"
+                                    id="dateOfPRL"
+                                    label="PRL Date"
+                                    value={formData.dateOfPRL}
+                                    onChange={val => {
+                                        setFormData(pre => ({
+                                            ...pre,
+                                            dateOfPRL: val.format('MM/DD/YYYY')
+                                        }));
                                     }}
                                     renderInput={params => (
                                         <TextField {...params} />
@@ -151,8 +257,8 @@ export default function AddEmployee() {
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button>Check Now</Button>
-                    <Button onClick={handleClose}>Add Now</Button>
+                    <Button onClick={handleClose}>Cancel</Button>
+                    <Button onClick={() => submitForm()}>Add Now</Button>
                 </DialogActions>
             </Dialog>
         </>

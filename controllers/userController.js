@@ -39,7 +39,7 @@ const loginController = async (req, res, next) => {
             if (isValidPassword) {
                 const token = jwt.sign(
                     {
-                        username: user[0].username,
+                        mobile: user[0].mobile,
                         userId: user[0]._id
                     },
                     process.env.JWT_SECRET,
@@ -58,7 +58,7 @@ const loginController = async (req, res, next) => {
                 } else {
                     res.json({
                         status: false,
-                        message: 'Login failed.'
+                        message: 'Authentication failed.'
                     });
                 }
             } else {

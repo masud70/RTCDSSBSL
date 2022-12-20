@@ -1,5 +1,11 @@
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import AddEmployee from './addEmployee/AddEmployee';
+import { useDispatch } from 'react-redux';
+import { addEmployeeModalToggle } from '../../redux/state/common/commonSlice';
+import dayjs from 'dayjs';
 import {
     DataGrid,
     GridToolbarContainer,
@@ -8,14 +14,10 @@ import {
     GridToolbarExport,
     GridToolbarDensitySelector
 } from '@mui/x-data-grid';
-import Button from '@mui/material/Button';
-import AddCircleIcon from '@mui/icons-material/AddCircle';
-import AddEmployee from './addEmployee/AddEmployee';
-import { useDispatch } from 'react-redux';
-import { addEmployeeModalToggle } from '../../redux/state/common/commonSlice';
+import { SocketContext } from '../socketContext';
 
 const columns = [
-    { field: 'id', headerName: 'ID', width: 60 },
+    { field: 'id', headerName: 'Sl No', width: 60 },
     {
         field: 'nameBn',
         headerName: 'নাম (বাংলা)',
@@ -52,41 +54,42 @@ const columns = [
     {
         field: 'currentOfficeJoinDate',
         headerName: 'বর্তমান অফিস যোগদানের তারিখ',
-        width: 150
+        width: 140,
+        valueGetter: params =>
+            dayjs(params.currentOfficeJoinDate).format('DD/MM/YYYY')
     },
     {
         field: 'dateOfPRL',
         headerName: 'পিআরএল গমনের তারিখ',
-        width: 100
+        width: 140,
+        valueGetter: params => dayjs(params.dateOfPRL).format('DD/MM/YYYY')
     },
     {
         field: 'dob',
         headerName: 'জন্ম তারিখ',
-        width: 100
-    }
-];
-
-const rows = [
-    {
-        id: 1,
-        nameBn: 'মোঃ মাসুদ মজুমদার',
-        nameEn: 'Md. Masud Mazumder',
-        email: 'mdmasud.csecu@gmail.com',
-        mobile: '01710089091',
-        designation: 'কম্পিউটার অপারেটর',
-        currentOffice: 'আঞ্চলিক প্রশিক্ষন কেন্দ্র, বরিশাল',
-        currentOfficeJoinDate: '22/10/2000',
-        dateOfPRL: '22/12/2025',
-        dob: '22/10/1988'
+        width: 110,
+        valueGetter: params => dayjs(params.dob).format('DD/MM/YYYY')
     }
 ];
 
 export default function Index() {
     const dispatch = useDispatch();
+    const [rows, setRows] = useState([]);
+    const [data, setData] = useState('Masud');
+    const socket = useContext(SocketContext);
 
-    const handleClickOpen = () => {
-        dispatch(addEmployeeModalToggle());
-    };
+    useEffect(() => {
+        fetch(process.env.BASE_URL + '/employee/getAll')
+            .then(res => res.json())
+            .then(data => {
+                setRows(data.users);
+            })
+            .catch(err => console.error(err));
+    }, []);
+
+    socket.off('registered').on('registered', x => {
+        setRows(pre => [...pre, x]);
+    });
 
     function CustomToolbar() {
         return (
@@ -99,7 +102,7 @@ export default function Index() {
                     printOptions={{ disableToolbarButton: true }}
                 />
                 <Button
-                    onClick={handleClickOpen}
+                    onClick={() => dispatch(addEmployeeModalToggle())}
                     className="bg-slate-600"
                     variant="contained"
                     endIcon={<AddCircleIcon />}>
@@ -116,6 +119,7 @@ export default function Index() {
                     rows={rows}
                     columns={columns}
                     pageSize={100}
+                    getRowId={row => row._id}
                     rowsPerPageOptions={[25, 50, 100]}
                     checkboxSelection
                     disableSelectionOnClick
