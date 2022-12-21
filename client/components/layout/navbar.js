@@ -2,11 +2,25 @@ import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { CiTextAlignJustify } from 'react-icons/ci';
+import { useDispatch, useSelector } from 'react-redux';
+import { logout } from '../../redux/state/auth/authSlice';
+import { deleteCookie } from 'cookies-next';
+import { useRouter } from 'next/router';
 
 export default function Navbar() {
+    const isLoggedIn = useSelector(state => state.auth.isLoggedIn);
+    const dispatch = useDispatch();
+    const router = useRouter();
+
     const ToggleClass = () => {
         var element = document.getElementById('toggleDiv');
         element.classList.toggle('hidden');
+    };
+
+    const logoutHandler = () => {
+        dispatch(logout());
+        deleteCookie(process.env.COOKIE_KEY_TOKEN);
+        router.push('/');
     };
 
     return (
@@ -40,7 +54,17 @@ export default function Navbar() {
                                 <Link href="sms-history">SMS History</Link>
                             </li>
                             <li className="hover:bg-slate-500 hover:rounded duration-500 px-2 py-1">
-                                <Link href="login">Login</Link>
+                                {isLoggedIn ? (
+                                    <>
+                                        <button onClick={logoutHandler}>
+                                            Log Out
+                                        </button>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Link href="login">Login</Link>
+                                    </>
+                                )}
                             </li>
                         </ul>
                         <div className="float-right flex items-center h-full md:hidden">
@@ -95,7 +119,17 @@ export default function Navbar() {
                             <Link href="sms-history">SMS History</Link>
                         </li>
                         <li className="hover:bg-gray-800 px-2 py-1 rounded duration-500">
-                            <Link href="login">Login</Link>
+                            {isLoggedIn ? (
+                                <>
+                                    <button onClick={logoutHandler}>
+                                        Log Out
+                                    </button>
+                                </>
+                            ) : (
+                                <>
+                                    <Link href="login">Login</Link>
+                                </>
+                            )}
                         </li>
                     </ul>
                 </div>

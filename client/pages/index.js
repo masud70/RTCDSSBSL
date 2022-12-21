@@ -1,15 +1,23 @@
-import React from "react";
-import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
-import { Carousel } from "react-responsive-carousel";
-import Posts from "../components/Posts";
-import Marquee from "react-fast-marquee";
-import LoadingButton from "@mui/lab/LoadingButton";
+import React, { useEffect } from 'react';
+import 'react-responsive-carousel/lib/styles/carousel.min.css'; // requires a loader
+import { Carousel } from 'react-responsive-carousel';
+import Posts from '../components/Posts';
+import Marquee from 'react-fast-marquee';
+import LoadingButton from '@mui/lab/LoadingButton';
+import { getCookie, hasCookie } from 'cookies-next';
+import { login } from '../redux/state/auth/authSlice';
+import { useDispatch } from 'react-redux';
 
 export default function index() {
     const [loading, setLoading] = React.useState(false);
-    const handleClick = () => {
-        setLoading(true);
-    };
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        if (hasCookie(process.env.COOKIE_KEY_TOKEN)) {
+            const token = getCookie(process.env.COOKIE_KEY_TOKEN);
+            dispatch(login({ isLoggedIn: true, token: token, userData: {} }));
+        }
+    }, []);
 
     return (
         <>
@@ -19,8 +27,7 @@ export default function index() {
                         autoPlay
                         infiniteLoop
                         dynamicHeight={false}
-                        className="h-20"
-                    >
+                        className="h-20">
                         <div>
                             <img src="./images/dss.jpg" className="h-56" />
                             <p className="legend">Legend 1</p>
@@ -49,8 +56,7 @@ export default function index() {
                 <div className="flex flex-col md:flex-row space-y-2 md:space-x-2">
                     <div
                         className="w-full md:w-4/6 bg-white mt-2 p-2 max-h-screen overflow-auto space-y-4"
-                        style={{}}
-                    >
+                        style={{}}>
                         <Posts />
                         <Posts />
                         <Posts />
@@ -58,10 +64,9 @@ export default function index() {
                         <div className="w-full items-center justify-center flex">
                             <LoadingButton
                                 size="small"
-                                onClick={handleClick}
+                                onClick={() => setLoading(true)}
                                 loading={loading}
-                                variant="outlined"
-                            >
+                                variant="outlined">
                                 Load More
                             </LoadingButton>
                         </div>

@@ -1,82 +1,78 @@
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const User = require('../models/People');
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const User = require("../models/People");
 
 //Register user controller
 const registerController = async (req, res, next) => {
     try {
         const hashedPassword = await bcrypt.hash(req.body.password, 10);
-        const username = req.body.email.split('@')[0];
+        const username = req.body.email.split("@")[0];
 
         const newUser = new User({
             ...req.body,
             username: username,
-            password: hashedPassword
+            password: hashedPassword,
         });
         const result = await newUser.save();
         console.log(result);
         res.json({
             status: true,
-            message: 'User was added successfully!'
+            message: "User was added successfully!",
         });
     } catch {
         res.status(500).json({
             status: false,
-            message: 'Unknown error occurred!'
+            message: "Unknown error occurred!",
         });
     }
 };
 
-const loginController = async (req, res, next) => {
+const loginController = async (req, res) => {
     try {
-        const user = await User.find({ email: req.body.email });
-        if (user && user.length > 0) {
-            const isValidPassword = await bcrypt.compare(
-                req.body.password,
-                user[0].password
-            );
+        const user = await User.findOne({
+            mobile: req.body.mobile,
+            status: "active",
+        });
 
-            if (isValidPassword) {
-                const token = jwt.sign(
-                    {
-                        mobile: user[0].mobile,
-                        userId: user[0]._id
-                    },
-                    process.env.JWT_SECRET,
-                    {
-                        expiresIn: '7d'
-                    }
-                );
-                user[0].password = null;
-                if (user[0].status === 'active') {
+        if (user) {
+            bcrypt
+                .compare(req.body.password, user.password)
+                .then(() => {
+                    const token = jwt.sign(
+                        {
+                            mobile: user.mobile,
+                            userId: user._id,
+                        },
+                        process.env.JWT_SECRET,
+                        {
+                            expiresIn: "7d",
+                        }
+                    );
+                    user.password = null;
+
                     res.json({
-                        status: true,
+                        status: "success",
                         token: token,
-                        userData: user[0],
-                        message: 'Login successful.'
+                        userData: user,
+                        message: "Login successful.",
                     });
-                } else {
+                })
+                .catch((error) => {
                     res.json({
-                        status: false,
-                        message: 'Authentication failed.'
+                        status: "error",
+                        message: "Authentication failed!",
                     });
-                }
-            } else {
-                res.json({
-                    status: false,
-                    message: 'Authentication failed!'
                 });
-            }
         } else {
             res.json({
-                status: false,
-                message: 'Email is not registered.'
+                status: "error",
+                message: "User is not registered.",
             });
         }
     } catch {
         res.json({
-            status: false,
-            message: 'Authentication failed!'
+            status: "error",
+            message: "Authentication failed!",
         });
     }
 };
@@ -89,18 +85,18 @@ const getDataController = async (req, res, next) => {
             user[0].password = null;
             res.json({
                 status: true,
-                userData: user[0]
+                userData: user[0],
             });
-        }else{
+        } else {
             res.json({
                 status: false,
-                message: 'User data not found'
+                message: "User data not found",
             });
         }
     } catch (error) {
         res.json({
             status: false,
-            message: 'User data not found'
+            message: "User data not found",
         });
     }
 };
@@ -108,5 +104,5 @@ const getDataController = async (req, res, next) => {
 module.exports = {
     registerController,
     loginController,
-    getDataController
+    getDataController,
 };
