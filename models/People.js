@@ -30,16 +30,16 @@ const peopleSchema = mongoose.Schema(
             trim: true,
         },
         dob: {
-            type: Date,
-            default: Date.now,
+            type: String,
+            default: null,
         },
         currentOfficeJoinDate: {
-            type: Date,
-            default: Date.now,
+            type: String,
+            default: null,
         },
         dateOfPRL: {
-            type: Date,
-            default: Date.now,
+            type: String,
+            default: null,
         },
         username: {
             type: String,

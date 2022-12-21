@@ -72,6 +72,48 @@ module.exports = {
         }
     },
 
+    //Update employee data
+    updateEmployee: (req, res) => {
+        User.findByIdAndUpdate(req.body._id, req.body, { new: true })
+            .then((response) => {
+                req.io.emit("updated", response);
+                res.json({
+                    status: "success",
+                    message: "Data updated successfully!",
+                });
+            })
+            .catch((error) => {
+                res.json({
+                    status: "error",
+                    message: "There was an error. Please try again.",
+                });
+            });
+    },
+
+    //Delete an employee
+    deleteEmployee: (req, res) => {
+        User.deleteOne({ _id: req.body.id })
+            .then((response) => {
+                if (response.acknowledged) {
+                    res.json({
+                        status: "success",
+                        message: "Employee deleted successfully!",
+                    });
+                } else {
+                    res.json({
+                        status: "error",
+                        message: "There was an error. Please try again.",
+                    });
+                }
+            })
+            .catch((err) => {
+                res.json({
+                    status: "error",
+                    message: "There was an error. Please try again.",
+                });
+            });
+    },
+
     // Get Data
     getData: async (req, res) => {
         try {

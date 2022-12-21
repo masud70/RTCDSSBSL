@@ -29,16 +29,16 @@ export default function index() {
                         dynamicHeight={false}
                         className="h-20">
                         <div>
-                            <img src="./images/dss.jpg" className="h-56" />
-                            <p className="legend">Legend 1</p>
+                            <img src="./images/dss.jpg" className="h-56" alt='DSS'/>
+                            <span className="legend">Legend 1</span>
                         </div>
                         <div>
-                            <img src="./images/img1.png" className="h-56" />
-                            <p className="legend">Legend 2</p>
+                            <img src="./images/img1.png" className="h-56" alt='img1'/>
+                            <span className="legend">Legend 2</span>
                         </div>
                         <div>
-                            <img src="./images/img2.png" className="h-56" />
-                            <p className="legend">Legend 3</p>
+                            <img src="./images/img2.png" className="h-56" alt='img2'/>
+                            <span className="legend">Legend 3</span>
                         </div>
                     </Carousel>
                 </div>
