@@ -1,5 +1,5 @@
 const bcrypt = require("bcrypt");
-const { request } = require("express");
+const Course = require("../models/Course");
 // const jwt = require('jsonwebtoken');
 const User = require("../models/People");
 
@@ -120,7 +120,7 @@ module.exports = {
             const users = await User.find({
                 status: "active",
                 role: "user",
-            });
+            }).populate("courseInfo");
             if (users && users.length > 0) {
                 res.json({
                     status: true,
@@ -138,5 +138,51 @@ module.exports = {
                 message: "There was an error",
             });
         }
+    },
+
+    updateCourse: (req, res, next) => {
+        const newCourse = new Course({
+            courseName: req.body.courseName,
+            startDate: req.body.startDate,
+            endDate: req.body.endDate,
+        });
+
+        newCourse
+            .save()
+            .then((response) => {
+                User.findByIdAndUpdate(
+                    req.body.userId,
+                    { courseInfo: response._id },
+                    { new: true },
+                    (err, result) => {
+                        if (err) next(err.message);
+                        else if (result && req.body._id) {
+                            Course.findByIdAndRemove(req.body._id, (e, r) => {
+                                console.log(e, r);
+                                if (e) {
+                                    res.json({
+                                        status: true,
+                                        message: "Data updated successfully!",
+                                        previousDeleted: false,
+                                    });
+                                } else {
+                                    res.json({
+                                        status: true,
+                                        message: "Data updated successfully!",
+                                        previousDeleted: true,
+                                    });
+                                }
+                            });
+                        } else {
+                            res.json({
+                                status: true,
+                                message: "Data updated successfully!",
+                                previousDeleted: false,
+                            });
+                        }
+                    }
+                );
+            })
+            .catch((err) => next(err.message));
     },
 };

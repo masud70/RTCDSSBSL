@@ -12,7 +12,6 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { useDispatch, useSelector } from 'react-redux';
 import { editEmployeeModalToggle } from '../../../redux/state/common/commonSlice';
 import axios from 'axios';
-import dayjs from 'dayjs';
 import swal from 'sweetalert';
 
 export default function index() {
@@ -199,15 +198,9 @@ export default function index() {
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClose}>Cancel</Button>
-                    <Button onClick={() => submitForm()}>Add Now</Button>
+                    <Button onClick={() => submitForm()}>Save Now</Button>
                 </DialogActions>
             </Dialog>
         </>
     );
 }
-
-/*
-dob: dayjs().format('MM/DD/YYYY'),
-        currentOfficeJoinDate: dayjs().format('MM/DD/YYYY'),
-        dateOfPRL: dayjs().format('MM/DD/YYYY')
-*/

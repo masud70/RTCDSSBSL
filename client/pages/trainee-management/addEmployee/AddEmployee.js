@@ -76,6 +76,7 @@ export default function AddEmployee() {
         console.log('Visibility', visibility);
         return vis;
     };
+    
     const submitForm = () => {
         console.log(formData);
         axios
@@ -99,7 +100,6 @@ export default function AddEmployee() {
             <Dialog
                 open={openModal}
                 onClose={handleClose}
-                // fullWidth={'sm'}
                 maxWidth={'sm'}
                 aria-labelledby="scroll-dialog-title"
                 aria-describedby="scroll-dialog-description">

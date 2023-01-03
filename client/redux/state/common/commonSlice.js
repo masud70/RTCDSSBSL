@@ -5,11 +5,19 @@ export const commonSlice = createSlice({
     initialState: {
         isAddEmployeeModalOpen: false,
         isEditEmployeeModalOpen: false,
-        editModalData: {}
+        isUpdateCourseInfoModalOpen: false,
+        editModalData: {},
+        updateCourseInfoData: {},
     },
     reducers: {
         addEmployeeModalToggle: state => {
             state.isAddEmployeeModalOpen = !state.isAddEmployeeModalOpen;
+        },
+        updateCourseInfoModalToggle: (state, action) => {
+            state.isUpdateCourseInfoModalOpen = !state.isUpdateCourseInfoModalOpen;
+            if (action.payload) {
+                state.updateCourseInfoData = action.payload.data;
+            }
         },
         editEmployeeModalToggle: (state, action) => {
             state.isEditEmployeeModalOpen = !state.isEditEmployeeModalOpen;
@@ -20,6 +28,9 @@ export const commonSlice = createSlice({
     }
 });
 
-export const { addEmployeeModalToggle, editEmployeeModalToggle } =
-    commonSlice.actions;
+export const {
+    addEmployeeModalToggle,
+    editEmployeeModalToggle,
+    updateCourseInfoModalToggle
+} = commonSlice.actions;
 export default commonSlice.reducer;

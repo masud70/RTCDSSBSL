@@ -61,6 +61,10 @@ const peopleSchema = mongoose.Schema(
             enum: ["active", "inactive"],
             default: "active",
         },
+        courseInfo: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Course",
+        },
     },
     {
         timestamp: true,

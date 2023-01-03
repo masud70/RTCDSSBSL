@@ -7,6 +7,7 @@ const {
     getData,
     deleteEmployee,
     updateEmployee,
+    updateCourse,
 } = require("../controllers/employeeControllers");
 const {
     employeeRegisterDataFilter,
@@ -24,5 +25,6 @@ router.get("/getAll", getData);
 router.post("/update", employeeRegisterDataFilter, updateEmployee);
 router.post("/delete", deleteEmployee);
 router.post("/check", checkData);
+router.post('/updateCourse', updateCourse)
 
 module.exports = router;
