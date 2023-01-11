@@ -1,108 +1,59 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const User = require("../models/People");
 
 //Register user controller
-const registerController = async (req, res, next) => {
-    try {
-        const hashedPassword = await bcrypt.hash(req.body.password, 10);
-        const username = req.body.email.split("@")[0];
+module.exports = {
+    registerController: (req, res, next) => {
+        let user = req.body;
+        const hashedPassword = bcrypt.hashSync("User@123", 10);
+        user.password = hashedPassword;
 
-        const newUser = new User({
-            ...req.body,
-            username: username,
-            password: hashedPassword,
-        });
-        const result = await newUser.save();
-        console.log(result);
-        res.json({
-            status: true,
-            message: "User was added successfully!",
-        });
-    } catch {
-        res.status(500).json({
-            status: false,
-            message: "Unknown error occurred!",
-        });
-    }
-};
+        req.db.User.findAll({ where: { phone: user.phone } })
+            .then((users) => {
+                if (users.length > 0) next("Phone number already registered.");
+                else {
+                    req.db.User.create(user)
+                        .then((resp) => {
+                            console.log(resp);
+                            res.json({
+                                status: true,
+                                message: "User registered successfully!",
+                                newUser: user,
+                            });
+                        })
+                        .catch((error2) => next(error2.message));
+                }
+            })
+            .catch((error) => next(error.message));
+    },
 
-const loginController = async (req, res) => {
-    try {
-        const user = await User.findOne({
-            mobile: req.body.mobile,
-            status: "active",
-        });
-
-        if (user) {
-            bcrypt
-                .compare(req.body.password, user.password)
-                .then(() => {
+    loginController: (req, res, next) => {
+        console.log(req.body);
+        req.db.User.findOne({ where: { phone: req.body.phone } })
+            .then((user) => {
+                console.log(user);
+                if (user && bcrypt.compareSync(req.body.password, user.password)) {
                     const token = jwt.sign(
                         {
-                            mobile: user.mobile,
-                            userId: user._id,
+                            phone: req.body.phone,
+                            userId: user.id,
                         },
                         process.env.JWT_SECRET,
                         {
                             expiresIn: "7d",
                         }
                     );
-                    user.password = null;
-
+                    delete user.dataValues.password;
+                    user.dataValues.token = token;
                     res.json({
-                        status: "success",
-                        token: token,
+                        status: true,
+                        message: "Authentication successful",
                         userData: user,
-                        message: "Login successful.",
                     });
-                })
-                .catch((error) => {
-                    res.json({
-                        status: "error",
-                        message: "Authentication failed!",
-                    });
-                });
-        } else {
-            res.json({
-                status: "error",
-                message: "User is not registered.",
-            });
-        }
-    } catch {
-        res.json({
-            status: "error",
-            message: "Authentication failed!",
-        });
-    }
-};
+                } else next("Inavalid password or user does not exists.");
+            })
+            .catch((er1) => next(er1.message));
+    },
 
-const getDataController = async (req, res, next) => {
-    console.log(req.body);
-    try {
-        const user = await User.find({ _id: req.body.userId });
-        if (user && user.length > 0) {
-            user[0].password = null;
-            res.json({
-                status: true,
-                userData: user[0],
-            });
-        } else {
-            res.json({
-                status: false,
-                message: "User data not found",
-            });
-        }
-    } catch (error) {
-        res.json({
-            status: false,
-            message: "User data not found",
-        });
-    }
-};
-
-module.exports = {
-    registerController,
-    loginController,
-    getDataController,
+    getDataController: (req, res, next) => {},
 };

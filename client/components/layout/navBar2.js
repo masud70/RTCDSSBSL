@@ -1,32 +1,54 @@
-import { Fragment } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { Disclosure, Menu, Transition } from '@headlessui/react';
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
-
-const navigation = [
-    { name: 'Home', href: '/', current: true },
-    { name: 'Trainee List', href: '/trainee-list', current: false },
-    { name: 'Trainee Management', href: '/trainee-management', current: false },
-    { name: 'Sms History', href: '/sms-history', current: false },
-    { name: 'Timeline', href: '/timeline', current: false }
-];
+import { logout } from '../../redux/state/authSlice';
 
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ');
 }
 
 export default function Navbar2() {
-    const isLoggedIn = useSelector(state => state.auth.isLoggedIn);
+    const [loginStatus, setLoginStatus] = useState(false);
+    const auth = useSelector(state => state.auth);
     const dispatch = useDispatch();
     const router = useRouter();
 
     const logoutHandler = () => {
         dispatch(logout());
-        deleteCookie(process.env.COOKIE_KEY_TOKEN);
-        router.push('/');
+        if (router.pathname !== '/') {
+            router.push('/');
+        }
     };
+    const navigation = [
+        { name: 'Home', href: '/', current: router.pathname === '/' },
+        {
+            name: 'Trainee List',
+            href: '/trainee-list',
+            current: router.pathname === '/trainee-list'
+        },
+        {
+            name: 'Trainee Management',
+            href: '/trainee-management',
+            current: router.pathname === '/trainee-management'
+        },
+        {
+            name: 'Sms History',
+            href: '/sms-history',
+            current: router.pathname === '/sms-history'
+        },
+        {
+            name: 'Timeline',
+            href: '/timeline',
+            current: router.pathname === '/timeline'
+        }
+    ];
+
+    useEffect(() => {
+        setLoginStatus(auth.status);
+    }, [auth]);
 
     return (
         <Disclosure as="nav" className="bg-gray-800">
@@ -104,7 +126,7 @@ export default function Navbar2() {
 
                                 {/* Profile dropdown */}
                                 <Menu as="div" className="relative ml-3">
-                                    {isLoggedIn ? (
+                                    {loginStatus ? (
                                         <>
                                             <div>
                                                 <Menu.Button className="flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
@@ -113,8 +135,8 @@ export default function Navbar2() {
                                                     </span>
                                                     <img
                                                         className="h-8 w-8 rounded-full"
-                                                        src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                                                        alt=""
+                                                        src="http://localhost:5000/images/profile.png"
+                                                        alt="User Profile"
                                                     />
                                                 </Menu.Button>
                                             </div>

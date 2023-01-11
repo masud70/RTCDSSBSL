@@ -1,9 +1,23 @@
 import React from 'react';
+import Post from './post';
 
 function index() {
     return (
         <>
             <div className="w-full bg-gray-700 min-h-screen px-2 pb-4">
+                <div className="w-full flex flex-col">
+                    <div className="bg-gray-800 p-2 font-bold text-white text-2xl text-center my-1">
+                        Your Timeline
+                    </div>
+                    <div className="flex flex-row space-x-2 overflow-auto scrollbar-hide">
+                        <div className="hidden lg:block w-1/6"></div>
+                        <div className="w-full lg:w-4/6 space-y-1">
+                            <Post />
+                            <Post />
+                        </div>
+                        <div className="hidden lg:w-1/6"></div>
+                    </div>
+                </div>
                 <div className="w-full flex flex-col">
                     <div className="bg-gray-800 p-2 font-bold text-white text-2xl text-center my-1">
                         YouTube Videos

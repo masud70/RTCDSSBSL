@@ -1,7 +1,6 @@
 const bcrypt = require("bcrypt");
-const Course = require("../models/Course");
-// const jwt = require('jsonwebtoken');
-const User = require("../models/People");
+const Course = require("../mongoModels/Course");
+const User = require("../mongoModels/People");
 
 module.exports = {
     //Check if the user
@@ -40,36 +39,42 @@ module.exports = {
     },
 
     //Register a user
-    register: async (req, res) => {
-        try {
-            const hashedPassword = await bcrypt.hash("PW123@45", 10);
-            const newUser = new User({
-                ...req.body,
-                password: hashedPassword,
-            });
-            console.log(req.body);
+    register: (req, res, next) => {
+        let user = req.body;
+        const hashedPassword = bcrypt.hashSync("User@123", 10);
+        user.password = hashedPassword;
 
-            newUser
-                .save()
-                .then((response) => {
-                    console.log(response);
-                    req.io.emit("registered", response);
-                    res.json({
-                        status: true,
-                        message: "User Registered Successfully",
-                    });
-                })
-                .catch((error) => {
-                    console.log(error);
-                    res.json({
-                        status: false,
-                        message: "Register failed! Please try again.",
-                    });
-                });
-        } catch (error) {
-            console.log(error);
-            res.json({ status: false, message: "There was an error" });
-        }
+        req.db.User.findAll({ where: { phone: user.phone } })
+            .then((users) => {
+                // console.log(users);
+                if (users.length > 0) next("Phone number already registered.");
+                else {
+                    req.db.User.create(user, {
+                        fields: [
+                            "email",
+                            "password",
+                            "nameBn",
+                            "nameEn",
+                            "designation",
+                            "currentOffice",
+                            "dob",
+                            "currentOfficeJoinDate",
+                            "dateOfPRL",
+                            "phone",
+                        ],
+                    })
+                        .then((resp) => {
+                            delete resp.password
+                            res.json({
+                                status: true,
+                                message: "User registered successfully!",
+                                newUser: resp,
+                            });
+                        })
+                        .catch((error2) => next(error2.message));
+                }
+            })
+            .catch((error) => next(error.message));
     },
 
     //Update employee data

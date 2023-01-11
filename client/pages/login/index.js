@@ -6,14 +6,14 @@ import LoginIcon from '@mui/icons-material/Login';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
 import swal from 'sweetalert';
-import { login } from '../../redux/state/auth/authSlice';
-import { setCookie } from 'cookies-next';
+import { login } from '../../redux/state/authSlice';
+import { getCookie, hasCookie } from 'cookies-next';
 
 const index = () => {
     const [loading, setLoading] = React.useState(false);
-    const [mobile, setMobile] = useState('');
+    const [phone, setPhone] = useState('');
     const [password, setPassword] = useState('');
-    const isLoggedIn = useSelector(state => state.auth);
+    const auth = useSelector(state => state.auth);
     const dispatch = useDispatch();
     const router = useRouter();
 
@@ -24,48 +24,46 @@ const index = () => {
                 return false;
             }
         }
-        setMobile(val);
+        setPhone(val);
         return true;
     };
     const onPasswordChange = val => {
         if (val.length <= 15) setPassword(val);
     };
 
-    const onSubmit = async () => {
-        if (mobile.length < 1 || password.length < 4) return;
-        setLoading(state => !state);
-        const response = await fetch(process.env.BASE_URL + '/user/login', {
+    const onSubmit = () => {
+        setLoading(true);
+        fetch(process.env.BASE_URL + '/user/login', {
             method: 'POST',
-            body: JSON.stringify({ mobile, password }),
+            body: JSON.stringify({ phone, password }),
             headers: {
                 Accept: 'application/json',
                 'Content-Type': 'application/json'
             }
-        });
-        const data = await response.json();
-
-        setLoading(false);
-        swal(data.message, { icon: data.status });
-
-        if (data.status === 'success') {
-            setCookie(process.env.COOKIE_KEY_TOKEN, data.token);
-            dispatch(
-                login({
-                    isLoggedIn: true,
-                    token: data.token,
-                    userData: data.userData
-                })
-            );
-            router.push('/');
-        }
+        })
+            .then(r => r.json())
+            .then(response => {
+                if (response.status) {
+                    dispatch(
+                        login({
+                            token: response.userData.token,
+                            userData: response.userData
+                        })
+                    );
+                    router.push('/');
+                } else {
+                    swal(response.message, { icon: 'error' });
+                }
+            })
+            .catch(err => swal(err.message, { icon: 'error' }))
+            .finally(() => {
+                setLoading(false);
+            });
     };
 
     useEffect(() => {
-        if (isLoggedIn) {
-            console.log(isLoggedIn);
-            // router.push('/');
-        } else {
-            console.log(isLoggedIn);
+        if (auth.status) {
+            router.push('/');
         }
     }, []);
 
@@ -103,7 +101,7 @@ const index = () => {
                                     variant="outlined"
                                     fullWidth
                                     className="w-full"
-                                    value={mobile}
+                                    value={phone}
                                     onChange={e =>
                                         onChangePhone(e.target.value)
                                     }

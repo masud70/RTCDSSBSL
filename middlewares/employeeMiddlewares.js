@@ -1,4 +1,4 @@
-const User = require("../models/People");
+const User = require("../mongoModels/People");
 
 module.exports = {
     checkUserExistence: (req, res, next) => {

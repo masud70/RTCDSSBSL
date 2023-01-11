@@ -1,26 +1,26 @@
-const { check, validationResult } = require('express-validator');
-const createHttpError = require('http-errors');
-const User = require('../../models/People');
+const { check, validationResult } = require("express-validator");
+const createHttpError = require("http-errors");
+const User = require("../../mongoModels/People");
 
 const registerValidator = [
-    check('email')
+    check("email")
         .isEmail()
-        .withMessage('Invalid email address')
+        .withMessage("Invalid email address")
         .trim()
-        .custom(async value => {
+        .custom(async (value) => {
             try {
                 const user = await User.findOne({ email: value });
                 if (user) {
-                    throw createHttpError('Email already in use!');
+                    throw createHttpError("Email already in use!");
                 }
             } catch (err) {
                 throw createHttpError(err.message);
             }
         }),
-    check('name')
+    check("name")
         .isString()
         .isLength({ min: 3 })
-        .withMessage('Name is required.')
+        .withMessage("Name is required."),
     // check('password')
     //     .isStrongPassword()
     //     .withMessage(
@@ -41,5 +41,5 @@ const registerValidationHandler = (req, res, next) => {
 
 module.exports = {
     registerValidator,
-    registerValidationHandler
+    registerValidationHandler,
 };

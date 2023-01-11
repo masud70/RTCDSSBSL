@@ -7,7 +7,11 @@ const bodyParser = require("body-parser");
 const app = express();
 const cors = require("cors");
 const server = require("http").createServer(app);
+const db = require("./models");
+const { Server } = require("socket.io");
+const io = new Server(server);
 dotenv.config();
+const bcrypt = require("bcrypt");
 
 //request parsers
 app.use(cors());
@@ -15,35 +19,21 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-
-//set static folder
 app.use(express.static(path.join(__dirname, "public")));
-
-//parse cookies
 app.use(cookieParser(process.env.COOKIE_SECRET));
 
 //Imports
 const {
     notFoundHandler,
     errorHandler,
-} = require("./middlewares/common/errorHandler");
+} = require("./middlewares/common");
 const userRouter = require("./router/userRouter");
 const employeeRouter = require("./router/employeeRouter");
-const { checkLogin } = require("./middlewares/common/checkLogin");
 const { upload } = require("./middlewares/common/imageUpload");
-const {
-    dataChecker,
-} = require("./socketRouteHandler/employeeDataChecker/checker");
 
-// socket connection
-const io = require("socket.io")(server, {
-    cors: {
-        origin: "https://localhost:3000",
-        methods: ["GET", "POST"],
-    },
-});
 app.use((req, res, next) => {
     req.io = io;
+    req.db = db;
     return next();
 });
 
@@ -61,16 +51,8 @@ mongoose
     });
 
 //routing setup
-//signup router
 app.use("/user", userRouter);
 app.use("/employee", employeeRouter);
-
-app.get("/", checkLogin, (req, res) => {
-    console.log(req.body);
-    res.json(req.body);
-});
-
-//avatar upload
 app.post("/uploadAvatar", upload.single("avatar"), (req, res, next) => {
     console.log(req.file);
     res.json({
@@ -78,25 +60,32 @@ app.post("/uploadAvatar", upload.single("avatar"), (req, res, next) => {
         message: "Upload successful!",
     });
 });
-
-//404 not found
 app.use(notFoundHandler);
-
-//error handler
 app.use(errorHandler);
 
 io.on("connection", (socket) => {
-    // console.log("User Connected with id " + socket.id);
+    // console.log("User connected");
     socket.on("disconnect", () => {
-        console.log(socket.id + " disconnected!!!");
+        // console.log("User disconnected");
+        socket.disconnect();
     });
-
-    socket.on("employeeDataChecking", async (data) => {
-        const result = await dataChecker(data);
-        socket.emit("employeeDataCheckingResult", result);
+    socket.on("toBack", (data) => {
+        console.log(data);
     });
 });
 
 server.listen(process.env.PORT, () => {
-    console.log("Server running @ " + process.env.PORT);
+    db.sequelize
+        .sync({ alter: true })
+        .then(() => {
+            console.log(
+`================================
+App listening to port ${process.env.PORT}
+Database connection successfully
+================================`
+            );
+        })
+        .catch((err) => {
+            console.log(err.message);
+        });
 });

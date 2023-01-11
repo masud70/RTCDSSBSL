@@ -1,23 +1,12 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import 'react-responsive-carousel/lib/styles/carousel.min.css'; // requires a loader
 import { Carousel } from 'react-responsive-carousel';
 import Posts from '../components/Posts';
 import Marquee from 'react-fast-marquee';
 import LoadingButton from '@mui/lab/LoadingButton';
-import { getCookie, hasCookie } from 'cookies-next';
-import { login } from '../redux/state/auth/authSlice';
-import { useDispatch } from 'react-redux';
 
 export default function index() {
     const [loading, setLoading] = React.useState(false);
-    const dispatch = useDispatch();
-
-    useEffect(() => {
-        if (hasCookie(process.env.COOKIE_KEY_TOKEN)) {
-            const token = getCookie(process.env.COOKIE_KEY_TOKEN);
-            dispatch(login({ isLoggedIn: true, token: token, userData: {} }));
-        }
-    }, []);
 
     return (
         <>
@@ -29,15 +18,27 @@ export default function index() {
                         dynamicHeight={false}
                         className="h-20">
                         <div>
-                            <img src="./images/dss.jpg" className="h-56" alt='DSS'/>
+                            <img
+                                src="./images/dss.jpg"
+                                className="h-56"
+                                alt="DSS"
+                            />
                             <span className="legend">Legend 1</span>
                         </div>
                         <div>
-                            <img src="./images/img1.png" className="h-56" alt='img1'/>
+                            <img
+                                src="./images/img1.png"
+                                className="h-56"
+                                alt="img1"
+                            />
                             <span className="legend">Legend 2</span>
                         </div>
                         <div>
-                            <img src="./images/img2.png" className="h-56" alt='img2'/>
+                            <img
+                                src="./images/img2.png"
+                                className="h-56"
+                                alt="img2"
+                            />
                             <span className="legend">Legend 3</span>
                         </div>
                     </Carousel>
