@@ -21,7 +21,7 @@ export default function index() {
 
     return (
         <>
-            <div className=" bg-gray-100 p-2">
+            <div className=" bg-gray-700 p-2">
                 <div className="w-full h-56 rounded overflow-hidden">
                     <Carousel
                         autoPlay

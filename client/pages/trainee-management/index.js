@@ -196,24 +196,26 @@ export default function Index() {
     };
 
     return (
-        <div>
-            <Box sx={{ height: 500, width: '100%' }}>
-                <DataGrid
-                    rows={rows}
-                    columns={columns}
-                    pageSize={100}
-                    getRowId={row => row._id}
-                    rowsPerPageOptions={[25, 50, 100]}
-                    checkboxSelection
-                    disableSelectionOnClick
-                    experimentalFeatures={{ newEditingApi: true }}
-                    components={{
-                        Toolbar: CustomToolbar
-                    }}
-                />
-            </Box>
-            <AddEmployee />
-            <EditEmployeeData />
+        <div className="bg-gray-700 min-h-screen px-2 py-1">
+            <div className="bg-gray-100 rounded">
+                <Box sx={{ height: 500, width: '100%' }}>
+                    <DataGrid
+                        rows={rows}
+                        columns={columns}
+                        pageSize={100}
+                        getRowId={row => row._id}
+                        rowsPerPageOptions={[25, 50, 100]}
+                        checkboxSelection
+                        disableSelectionOnClick
+                        experimentalFeatures={{ newEditingApi: true }}
+                        components={{
+                            Toolbar: CustomToolbar
+                        }}
+                    />
+                </Box>
+                <AddEmployee />
+                <EditEmployeeData />
+            </div>
         </div>
     );
 }

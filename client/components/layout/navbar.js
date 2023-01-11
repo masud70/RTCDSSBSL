@@ -51,7 +51,7 @@ export default function Navbar() {
                                 </Link>
                             </li>
                             <li className="hover:bg-slate-500 hover:rounded duration-500 px-2 py-1">
-                                <Link href="sms-history">SMS History</Link>
+                                <Link href="/sms-history">SMS History</Link>
                             </li>
                             <li className="hover:bg-slate-500 hover:rounded duration-500 px-2 py-1">
                                 {isLoggedIn ? (
