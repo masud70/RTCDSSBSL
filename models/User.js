@@ -56,5 +56,9 @@ module.exports = (sequelize, DataTypes) => {
             defaultValue: "user",
         },
     });
+    User.associate = (models) => {
+        models.User.hasMany(models.Post);
+        models.User.hasMany(models.Comment);
+    };
     return User;
 };

@@ -33,7 +33,7 @@ module.exports = {
 
     //default errorHandler
     errorHandler: (err, req, res, next) => {
-        console.log("Error:", err);
+        console.log("Error:", err.message);
         res.json({
             status: false,
             message: err,

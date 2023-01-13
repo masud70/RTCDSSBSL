@@ -7,7 +7,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
 import swal from 'sweetalert';
 import { login } from '../../redux/state/authSlice';
-import { getCookie, hasCookie } from 'cookies-next';
 
 const index = () => {
     const [loading, setLoading] = React.useState(false);
@@ -70,7 +69,7 @@ const index = () => {
     return (
         <>
             <div className="absolute top-0 bg-slate-200 h-screen w-screen flex items-center justify-center  shadow-xl">
-                <div className="w-1/2 md:w-3/4 h-3/4 flex flex-row justify-between">
+                <div className="w-5/6 sm:4/6 md:w-1/2 h-3/4 flex flex-row justify-between">
                     <div className="hidden md:flex w-full justify-center items-center overflow-hidden rounded-l-xl">
                         <Image
                             src="/images/gif.gif"

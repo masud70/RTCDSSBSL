@@ -11,7 +11,6 @@ const db = require("./models");
 const { Server } = require("socket.io");
 const io = new Server(server);
 dotenv.config();
-const bcrypt = require("bcrypt");
 
 //request parsers
 app.use(cors());
@@ -23,12 +22,10 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(cookieParser(process.env.COOKIE_SECRET));
 
 //Imports
-const {
-    notFoundHandler,
-    errorHandler,
-} = require("./middlewares/common");
+const { notFoundHandler, errorHandler } = require("./middlewares/common");
 const userRouter = require("./router/userRouter");
 const employeeRouter = require("./router/employeeRouter");
+const postRouter = require("./router/postRouter");
 const { upload } = require("./middlewares/common/imageUpload");
 
 app.use((req, res, next) => {
@@ -53,6 +50,7 @@ mongoose
 //routing setup
 app.use("/user", userRouter);
 app.use("/employee", employeeRouter);
+app.use("/post", postRouter);
 app.post("/uploadAvatar", upload.single("avatar"), (req, res, next) => {
     console.log(req.file);
     res.json({
@@ -79,7 +77,7 @@ server.listen(process.env.PORT, () => {
         .sync({ alter: true })
         .then(() => {
             console.log(
-`================================
+                `================================
 App listening to port ${process.env.PORT}
 Database connection successfully
 ================================`

@@ -135,7 +135,7 @@ export default function Navbar2() {
                                                     </span>
                                                     <img
                                                         className="h-8 w-8 rounded-full"
-                                                        src="http://localhost:5000/images/profile.png"
+                                                        src="http://192.168.0.200:5000/images/profile.png"
                                                         alt="User Profile"
                                                     />
                                                 </Menu.Button>

@@ -1,7 +1,85 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import dynamic from 'next/dynamic';
+const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
+import 'react-quill/dist/quill.snow.css';
 import Post from './post';
+import dayjs from 'dayjs';
+import swal from 'sweetalert';
+import { InfinitySpin } from 'react-loader-spinner';
 
 function index() {
+    const [postData, setPostData] = useState('');
+    const [data, setData] = useState({});
+    const [open, setOpen] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const auth = useSelector(state => state.auth);
+
+    const postHander = () => {
+        const url = process.env.BASE_URL + '/post/create';
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                authorization: 'Bearer ' + auth.token
+            },
+            body: JSON.stringify({
+                body: postData,
+                time: dayjs().unix().toString()
+            })
+        })
+            .then(r => r.json())
+            .then(res => {
+                if (res.status) {
+                    setPostData('');
+                    setOpen(false);
+                    swal(res.message, { icon: 'success' });
+                } else {
+                    swal(res.message, { icon: 'error' });
+                }
+            })
+            .catch(err => {
+                swal(err.message, { icon: 'error' });
+            });
+    };
+    const formats = [
+        'header',
+        'font',
+        'size',
+        'bold',
+        'italic',
+        'underline',
+        'strike',
+        'blockquote',
+        'list',
+        'bullet',
+        'indent',
+        'link',
+        'image',
+        'color'
+    ];
+
+    useEffect(() => {
+        const url = process.env.BASE_URL + '/post/getAll';
+        fetch(url, {
+            method: 'GET',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                authorization: 'Bearer ' + auth.token
+            }
+        })
+            .then(r => r.json())
+            .then(res => {
+                if (res.status) {
+                    setData(res.data);
+                }
+            })
+            .catch(err => {})
+            .finally(() => setLoading(false));
+    }, []);
+
     return (
         <>
             <div className="w-full bg-gray-700 min-h-screen px-2 pb-4">
@@ -12,8 +90,51 @@ function index() {
                     <div className="flex flex-row space-x-2 overflow-auto scrollbar-hide">
                         <div className="hidden lg:block w-1/6"></div>
                         <div className="w-full lg:w-4/6 space-y-1">
-                            <Post />
-                            <Post />
+                            <div className="w-full bg-gray-400 rounded overflow-hidden p-1">
+                                <button
+                                    className="w-full bg-green-700 p-1 font-bold text-gray-50 text-xl text-center rounded cursor-pointer"
+                                    onClick={() => {
+                                        setOpen(p => !p);
+                                    }}>
+                                    Write a new post
+                                </button>
+                                <div
+                                    className={`w-full ${
+                                        !open && 'hidden'
+                                    } flex flex-col justify-between`}>
+                                    <div className="w-full p-1 block bg-gray-100 rounded overflow-hidden">
+                                        <ReactQuill
+                                            style={{ height: 170, padding: 2 }}
+                                            className="block mb-10"
+                                            theme="snow"
+                                            value={postData}
+                                            onChange={setPostData}
+                                            formats={formats}
+                                        />
+                                    </div>
+                                    <div className="w-full p-1 text-right">
+                                        <button
+                                            className="px-2 py-1 font-bold bg-green-600 text-white rounded"
+                                            onClick={postHander}>
+                                            Post Now
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            {loading ? (
+                                <div className="w-full flex flex-col items-center py-2">
+                                    <InfinitySpin width="200" color="#4fa94d" />
+                                    <span className="font-bold text-white text-lg">
+                                        Loading data...
+                                    </span>
+                                </div>
+                            ) : data.length > 0 ? (
+                                data.map((item, id) => {
+                                    return <Post data={item} key={id} />;
+                                })
+                            ) : (
+                                <div>No Data Found</div>
+                            )}
                         </div>
                         <div className="hidden lg:w-1/6"></div>
                     </div>
