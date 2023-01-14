@@ -1,12 +1,37 @@
-import React from 'react';
-import 'react-responsive-carousel/lib/styles/carousel.min.css'; // requires a loader
+import React, { useEffect } from 'react';
+import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import { Carousel } from 'react-responsive-carousel';
 import Posts from '../components/Posts';
 import Marquee from 'react-fast-marquee';
 import LoadingButton from '@mui/lab/LoadingButton';
+import { useDispatch, useSelector } from 'react-redux';
+import { setUserData } from '../redux/state/auth/authSlice';
 
 export default function index() {
     const [loading, setLoading] = React.useState(false);
+    const auth = useSelector(state => state.auth);
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        const url = process.env.BASE_URL + '/user/getData';
+        fetch(url, {
+            method: 'GET',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                authorization: 'Bearer ' + auth.token
+            }
+        })
+            .then(r => r.json())
+            .then(res => {
+                if (res.status) {
+                    dispatch(setUserData({ userData: res.userData }));
+                }
+            })
+            .catch(err => {
+                console.log(err);
+            });
+    }, [auth]);
 
     return (
         <>

@@ -32,7 +32,10 @@ module.exports = {
         req.db.User.findOne({ where: { phone: req.body.phone } })
             .then((user) => {
                 console.log(user);
-                if (user && bcrypt.compareSync(req.body.password, user.password)) {
+                if (
+                    user &&
+                    bcrypt.compareSync(req.body.password, user.password)
+                ) {
                     const token = jwt.sign(
                         {
                             phone: req.body.phone,
@@ -55,5 +58,17 @@ module.exports = {
             .catch((er1) => next(er1.message));
     },
 
-    getDataController: (req, res, next) => {},
+    getDataController: (req, res, next) => {
+        req.db.User.findByPk(req.body.auth.userId, {
+            attributes: {
+                exclude: ["password"],
+            },
+        })
+            .then((resp) => {
+                if (resp) {
+                    res.json({ status: true, userData: resp });
+                } else next("Data not found.");
+            })
+            .catch((error) => next(error.message));
+    },
 };

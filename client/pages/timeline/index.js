@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import dynamic from 'next/dynamic';
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
@@ -7,6 +7,7 @@ import Post from './post';
 import dayjs from 'dayjs';
 import swal from 'sweetalert';
 import { InfinitySpin } from 'react-loader-spinner';
+import { SocketContext } from '../socketContext';
 
 function index() {
     const [postData, setPostData] = useState('');
@@ -14,6 +15,7 @@ function index() {
     const [open, setOpen] = useState(false);
     const [loading, setLoading] = useState(true);
     const auth = useSelector(state => state.auth);
+    const socket = useContext(SocketContext);
 
     const postHander = () => {
         const url = process.env.BASE_URL + '/post/create';
@@ -60,7 +62,7 @@ function index() {
         'color'
     ];
 
-    useEffect(() => {
+    const fetchData = () => {
         const url = process.env.BASE_URL + '/post/getAll';
         fetch(url, {
             method: 'GET',
@@ -78,6 +80,14 @@ function index() {
             })
             .catch(err => {})
             .finally(() => setLoading(false));
+    };
+
+    socket.off('updatePost').on('updatePost', d => {
+        fetchData();
+    });
+
+    useEffect(() => {
+        fetchData();
     }, []);
 
     return (
@@ -139,7 +149,7 @@ function index() {
                         <div className="hidden lg:w-1/6"></div>
                     </div>
                 </div>
-                <div className="w-full flex flex-col">
+                {/* <div className="w-full flex flex-col">
                     <div className="bg-gray-800 p-2 font-bold text-white text-2xl text-center my-1">
                         YouTube Videos
                     </div>
@@ -184,7 +194,7 @@ function index() {
                             className="w-full"
                             referrerpolicy="no-referrer-when-downgrade"></iframe>
                     </div>
-                </div>
+                </div> */}
             </div>
         </>
     );

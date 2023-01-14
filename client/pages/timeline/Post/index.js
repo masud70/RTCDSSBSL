@@ -9,36 +9,27 @@ function Index({ data }) {
     const [item, setItem] = useState({});
     const [comment, setComment] = useState('');
     const auth = useSelector(state => state.auth);
-    const [postData, setPostData] = useState({
-        likeCount: 100,
-        dislikeCount: 1,
-        commentCount: 55,
-        comments: [
-            {
-                userId: 'user1',
-                commentId: 'comment1',
-                commentBody: 'Here goes comment data.'
-            },
-            {
-                userId: 'user2',
-                commentId: 'comment2',
-                commentBody: 'Here goes comment data.'
-            },
-            {
-                userId: 'user3',
-                commentId: 'comment3',
-                commentBody: 'Here goes comment data.'
-            },
-            {
-                userId: 'user4',
-                commentId: 'comment4',
-                commentBody: 'Here goes comment data.'
-            }
-        ]
-    });
 
-    const likeHandler = () => {};
-    const dislikeHandler = () => {};
+    const reactionHander = reactionType => {
+        const url = process.env.BASE_URL + '/post/reaction';
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                authorization: 'Bearer ' + auth.token
+            },
+            body: JSON.stringify({ type: reactionType, postId: data.id })
+        })
+            .then(r => r.json())
+            .then(res => {
+                console.log(res);
+            })
+            .catch(err => {
+                console.log(err);
+            });
+    };
+
     const commentHandler = e => {
         if (e.keyCode == 13) {
             setComment(comment.replace('\n', ''));
@@ -75,7 +66,7 @@ function Index({ data }) {
 
     useEffect(() => {
         setItem(data);
-        console.log(data);
+        console.log(auth);
     }, [data]);
 
     return (
@@ -90,19 +81,39 @@ function Index({ data }) {
                     </pre>
                     <div className="w-full p-1 flex divide-x divide-slate-500 border-t border-gray-500">
                         <div
-                            className="text-center w-2/6 cursor-pointer"
-                            onClick={likeHandler}>
-                            Like ({postData.likeCount})
+                            className={`text-center w-2/6 cursor-pointer ${
+                                auth.userData &&
+                                data.reactions.filter(
+                                    r => r.UserId === auth.userData.id
+                                )
+                                    ? 'bg-blue-400'
+                                    : ''
+                            }rounded-full`}
+                            onClick={() => reactionHander('like')}>
+                            Like (
+                            {
+                                data.reactions.filter(
+                                    reaction => reaction.type === 'like'
+                                ).length
+                            }
+                            )
                         </div>
                         <div
                             className="text-center w-2/6 cursor-pointer"
-                            onClick={dislikeHandler}>
-                            Dislike ({postData.dislikeCount})
+                            onClick={() => reactionHander('dislike')}>
+                            Dislike (
+                            {
+                                data.reactions.filter(
+                                    reaction => reaction.type === 'dislike'
+                                ).length
+                            }
+                            )
                         </div>
                         <div
                             className="text-center w-2/6 cursor-pointer"
                             onClick={() => setOpen(!open)}>
-                            Comment ({item && item.comments && item.comments.length})
+                            Comment (
+                            {item && item.comments && item.comments.length})
                         </div>
                     </div>
                     <div
@@ -122,7 +133,8 @@ function Index({ data }) {
                             />
                         </div>
                         <div className="w-full space-y-1">
-                            {item && item.comments &&
+                            {item &&
+                                item.comments &&
                                 item.comments.map((item, id) => {
                                     return (
                                         <div

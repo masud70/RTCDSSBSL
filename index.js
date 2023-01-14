@@ -28,6 +28,18 @@ const employeeRouter = require("./router/employeeRouter");
 const postRouter = require("./router/postRouter");
 const { upload } = require("./middlewares/common/imageUpload");
 
+io.on("connection", (socket) => {
+    // console.log("User connected");
+    socket.on("disconnect", () => {
+        // console.log("User disconnected");
+        socket.disconnect();
+    });
+    socket.on("toBack", (data) => {
+        console.log(data);
+    });
+});
+
+global.io = io;
 app.use((req, res, next) => {
     req.io = io;
     req.db = db;
@@ -35,17 +47,17 @@ app.use((req, res, next) => {
 });
 
 //database connection
-mongoose
-    .connect(process.env.MONGO_CONNECTION_STRING, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-    })
-    .then(() => {
-        console.log("Database connection successful!");
-    })
-    .catch((err) => {
-        console.log(err);
-    });
+// mongoose
+//     .connect(process.env.MONGO_CONNECTION_STRING, {
+//         useNewUrlParser: true,
+//         useUnifiedTopology: true,
+//     })
+//     .then(() => {
+//         console.log("Database connection successful!");
+//     })
+//     .catch((err) => {
+//         console.log(err);
+//     });
 
 //routing setup
 app.use("/user", userRouter);
@@ -60,17 +72,6 @@ app.post("/uploadAvatar", upload.single("avatar"), (req, res, next) => {
 });
 app.use(notFoundHandler);
 app.use(errorHandler);
-
-io.on("connection", (socket) => {
-    // console.log("User connected");
-    socket.on("disconnect", () => {
-        // console.log("User disconnected");
-        socket.disconnect();
-    });
-    socket.on("toBack", (data) => {
-        console.log(data);
-    });
-});
 
 server.listen(process.env.PORT, () => {
     db.sequelize

@@ -9,7 +9,7 @@ const {
     loginController,
     getDataController,
 } = require("../controllers/userController");
-const { checkLogin } = require("../middlewares/common/checkLogin");
+const { checkLogin } = require("../middlewares/common");
 
 const router = express.Router();
 
@@ -22,8 +22,6 @@ router.post(
 );
 
 router.post("/login", loginController);
-
-//Get user data
 router.get("/getData", checkLogin, getDataController);
 
 module.exports = router;

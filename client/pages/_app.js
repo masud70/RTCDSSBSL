@@ -7,7 +7,7 @@ import { io } from 'socket.io-client';
 import { SocketContext } from './socketContext';
 
 function MyApp({ Component, pageProps }) {
-    const socket = io('http://localhost:5000', {
+    const socket = io(process.env.BASE_URL, {
         transports: ['websocket']
     });
 
