@@ -152,7 +152,7 @@ export default function Navbar2() {
                                                     <Menu.Item>
                                                         {({ active }) => (
                                                             <Link
-                                                                href="/my-profile"
+                                                                href="/profile"
                                                                 className={classNames(
                                                                     active
                                                                         ? 'bg-gray-100'

@@ -3,6 +3,22 @@ const Course = require("../mongoModels/Course");
 const User = require("../mongoModels/People");
 
 module.exports = {
+    // Get Data
+    getData: async (req, res, next) => {
+        req.db.User.findAll({ where: { status: 1 } })
+            .then((data) => {
+                res.json({
+                    status: true,
+                    message: "Data found.",
+                    data: data,
+                });
+            })
+            .catch((error) => {
+                next(error.message);
+            });
+    },
+
+    //============================================//
     //Check if the user
     checkData: async (req, res) => {
         try {
@@ -64,7 +80,7 @@ module.exports = {
                         ],
                     })
                         .then((resp) => {
-                            delete resp.password
+                            delete resp.password;
                             res.json({
                                 status: true,
                                 message: "User registered successfully!",
@@ -117,32 +133,6 @@ module.exports = {
                     message: "There was an error. Please try again.",
                 });
             });
-    },
-
-    // Get Data
-    getData: async (req, res) => {
-        try {
-            const users = await User.find({
-                status: "active",
-                role: "user",
-            }).populate("courseInfo");
-            if (users && users.length > 0) {
-                res.json({
-                    status: true,
-                    users: users,
-                });
-            } else {
-                res.json({
-                    status: false,
-                    message: "No data found.",
-                });
-            }
-        } catch (error) {
-            res.json({
-                status: false,
-                message: "There was an error",
-            });
-        }
     },
 
     updateCourse: (req, res, next) => {

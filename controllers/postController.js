@@ -1,4 +1,46 @@
 module.exports = {
+    getAllPost: async (req, res, next) => {
+        try {
+            const posts = await req.db.Post.findAll({
+                include: [
+                    {
+                        association: "User",
+                        attributes: [
+                            "nameBn",
+                            "nameEn",
+                            "email",
+                            "designation",
+                            "avatar",
+                        ],
+                    },
+                ],
+                order: [["createdAt", "DESC"]],
+            });
+
+            let ret = [];
+
+            for (let idx = 0; idx < posts.length; idx++) {
+                const comments = await req.db.Comment.findAll({
+                    where: { PostId: posts[idx].id },
+                    order: [["createdAt", "DESC"]],
+                });
+                const { count, rows } = await req.db.Reaction.findAndCountAll({
+                    where: { PostId: posts[idx].id },
+                });
+                const cmnts = { comments: comments };
+                const reactions = { reactions: rows };
+                ret.push({ ...posts[idx].dataValues, ...cmnts, ...reactions });
+            }
+            res.json({
+                status: true,
+                data: ret,
+            });
+        } catch (error) {
+            next(error);
+        }
+    },
+
+    // ============================================================== //
     createPost: (req, res, next) => {
         const data = req.body;
         req.db.Post.create(
@@ -64,48 +106,6 @@ module.exports = {
             });
         } catch (error) {
             next(error.message);
-        }
-    },
-
-    getAllPost: async (req, res, next) => {
-        try {
-            const posts = await req.db.Post.findAll({
-                include: [
-                    {
-                        association: "User",
-                        attributes: [
-                            "nameBn",
-                            "nameEn",
-                            "email",
-                            "designation",
-                            "avatar",
-                        ],
-                    },
-                ],
-                order: [["createdAt", "DESC"]],
-            });
-
-            let ret = [];
-
-            for (let idx = 0; idx < posts.length; idx++) {
-                const comments = await req.db.Comment.findAll({
-                    where: { PostId: posts[idx].id },
-                    order: [["createdAt", "DESC"]],
-                });
-                const { count, rows } = await req.db.Reaction.findAndCountAll({
-                    where: { PostId: posts[idx].id },
-                    group: ["type"],
-                });
-                const cmnts = { comments: comments };
-                const reactions = { reactions: rows };
-                ret.push({ ...posts[idx].dataValues, ...cmnts, ...reactions });
-            }
-            res.json({
-                status: true,
-                data: ret,
-            });
-        } catch (error) {
-            next(error);
         }
     },
 

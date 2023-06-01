@@ -53,7 +53,6 @@ function Index({ data }) {
                     if (res.status) {
                         setComment('');
                         setOpen(false);
-                        swal(res.message, { icon: 'success' });
                     } else {
                         swal(res.message, { icon: 'error' });
                     }
@@ -149,6 +148,8 @@ function Index({ data }) {
                                             </div>
                                             <div className="w-11/12">
                                                 {item.body}
+                                                <br/>
+                                                <span className='text-[8px] text-gray-500'>{item.time}</span>
                                             </div>
                                         </div>
                                     );

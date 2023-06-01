@@ -18,6 +18,8 @@ import { getCookie } from 'cookies-next';
 
 export default function AddEmployee() {
     const [loader, setLoader] = useState(false);
+    const [phoneError, setPhoneError] = useState(false);
+    const [mailOtp, setMailOtp] = useState(0);
     const openModal = useSelector(state => state.common.isAddEmployeeModalOpen);
     const dispatch = useDispatch();
     const [formData, setFormData] = useState({
@@ -54,6 +56,55 @@ export default function AddEmployee() {
             })
             .finally(() => {
                 setLoader(false);
+            });
+    };
+
+    const checkPhone = phone => {
+        if (phone.length >= 11) {
+            fetch(process.env.BASE_URL + '/user/checkPhone/' + phone)
+                .then(response => {
+                    return response.json();
+                })
+                .then(data => {
+                    setPhoneError(data.status);
+                })
+                .catch(error => {
+                    swal(error.message, { icon: 'error' });
+                });
+        }
+    };
+
+    const sendOtp = email => {
+        fetch(process.env.BASE_URL + '/user/checkMail/' + email)
+            .then(response => {
+                return response.json();
+            })
+            .then(data => {
+                if (data.status) {
+                    setMailOtp(1);
+                    swal(data.message, { icon: 'success' });
+                }
+            })
+            .catch(error => {
+                swal(error.message, { icon: 'error' });
+            });
+    };
+
+    const verifyOtp = (email, otp) => {
+        fetch(process.env.BASE_URL + '/user/verifyOtp/' + email + '+' + otp)
+            .then(response => {
+                return response.json();
+            })
+            .then(data => {
+                if (data.status) {
+                    setMailOtp(-1);
+                    swal(data.message, { icon: 'success' });
+                } else {
+                    setMailOtp(2);
+                }
+            })
+            .catch(error => {
+                swal(error.message, { icon: 'error' });
             });
     };
 
@@ -98,30 +149,73 @@ export default function AddEmployee() {
                                         }));
                                     }}
                                 />
-                                <TextField
-                                    className="w-full"
-                                    id="email"
-                                    label="ই-মেইল"
-                                    onChange={e => {
-                                        const { id, value } = e.target;
-                                        setFormData(pre => ({
-                                            ...pre,
-                                            [id]: value
-                                        }));
-                                    }}
-                                />
+                                <div className="w-full">
+                                    <TextField
+                                        className="w-5/6"
+                                        id="email"
+                                        label="ই-মেইল"
+                                        onChange={e => {
+                                            const { id, value } = e.target;
+                                            setFormData(pre => ({
+                                                ...pre,
+                                                [id]: value
+                                            }));
+                                        }}
+                                    />
+                                    <Button
+                                        className="w-1/6"
+                                        onClick={() => {
+                                            if (mailOtp == 0)
+                                                sendOtp(formData.email);
+                                        }}>
+                                        {mailOtp == 0
+                                            ? 'Send OTP'
+                                            : mailOtp > 0
+                                            ? 'Resend OTP'
+                                            : 'Email verified'}
+                                    </Button>
+                                </div>
+
+                                <div
+                                    className={`text-red-400 text-xs ${
+                                        mailOtp < 1 && 'hidden'
+                                    }`}>
+                                    <TextField
+                                        className="w-full"
+                                        label="OTP"
+                                        id="otp"
+                                        onChange={e => {
+                                            const otp = e.target.value;
+                                            if (otp.length == 6)
+                                                verifyOtp(formData.email, otp);
+                                        }}
+                                    />
+                                    <div
+                                        className={`text-red-400 text-xs ${
+                                            mailOtp < 2 && 'hidden'
+                                        }`}>
+                                        Incorrect OTP.
+                                    </div>
+                                </div>
                                 <TextField
                                     className="w-full"
                                     id="phone"
                                     label="মোবাইল নম্বর"
                                     onChange={e => {
                                         const { id, value } = e.target;
+                                        checkPhone(value);
                                         setFormData(pre => ({
                                             ...pre,
                                             [id]: value
                                         }));
                                     }}
                                 />
+                                <div
+                                    className={`text-red-400 text-xs ${
+                                        !phoneError && 'hidden'
+                                    }`}>
+                                    This phone number is already in use.
+                                </div>
                                 <TextField
                                     className="w-full"
                                     id="designation"
@@ -222,7 +316,7 @@ export default function AddEmployee() {
                     </DialogActions>
                 </Dialog>
             )}
-            <div className="absolute bg-slate-700 top-0 left-0 h-screen w-screen justify-center items-center flex">
+            {/* <div className="absolute bg-slate-700 top-0 left-0 h-screen w-screen justify-center items-center flex">
                 <BallTriangle
                     height={120}
                     width={120}
@@ -234,7 +328,7 @@ export default function AddEmployee() {
                     visible={loader}
                     className="absolute top-0 left-0"
                 />
-            </div>
+            </div> */}
         </>
     );
 }

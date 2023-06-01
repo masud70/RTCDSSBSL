@@ -47,7 +47,7 @@ export default function Index() {
             width: 200
         },
         {
-            field: 'mobile',
+            field: 'phone',
             headerName: 'মোবাইল',
             width: 150
         },
@@ -141,7 +141,7 @@ export default function Index() {
         fetch(process.env.BASE_URL + '/employee/getAll')
             .then(res => res.json())
             .then(data => {
-                setRows(data.users);
+                setRows(data.data);
             })
             .catch(err => console.error(err));
     }, []);
@@ -167,7 +167,7 @@ export default function Index() {
                     rows={rows}
                     columns={columns}
                     pageSize={100}
-                    getRowId={row => row._id}
+                    getRowId={row => row.id}
                     rowsPerPageOptions={[25, 50, 100]}
                     checkboxSelection
                     autoHeight
