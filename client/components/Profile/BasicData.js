@@ -21,9 +21,9 @@ const BasicData = () => {
     const convert = (key, value) => {
         if (keyArray[key]) {
             return (
-                <div className="flex space-x-4 bg-slate-300 px-2 py-1 rounded-sm text-sm font-bold text-slate-700">
-                    <div>{keyArray[key]}:</div>
-                    <div>{value}</div>
+                <div className="flex bg-slate-300 px-2 py-1 rounded-sm text-sm font-bold text-slate-700">
+                    <div className='w-4/6'>{keyArray[key]}:</div>
+                    <div className='w-full'>{value}</div>
                 </div>
             );
         } else return null;

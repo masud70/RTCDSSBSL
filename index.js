@@ -1,6 +1,5 @@
 const express = require("express");
 const dotenv = require("dotenv");
-const mongoose = require("mongoose");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
@@ -22,20 +21,22 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(cookieParser(process.env.COOKIE_SECRET));
 
 //Imports
-const { notFoundHandler, errorHandler } = require("./middlewares/common");
+const {
+    notFoundHandler,
+    errorHandler,
+    checkLogin,
+} = require("./middlewares/common");
 const userRouter = require("./router/userRouter");
 const employeeRouter = require("./router/employeeRouter");
 const postRouter = require("./router/postRouter");
-const { upload } = require("./middlewares/common/imageUpload");
+const { upload, updateDatabase } = require("./middlewares/common/imageUpload");
 const { GraphQLObjectType, GraphQLSchema } = require("graphql");
 const userMutations = require("./graphql/user/mutations");
 const userQuery = require("./graphql/user/query");
 const { graphqlHTTP } = require("express-graphql");
 
 io.on("connection", (socket) => {
-    // console.log("User connected");
     socket.on("disconnect", () => {
-        // console.log("User disconnected");
         socket.disconnect();
     });
     socket.on("toBack", (data) => {
@@ -89,13 +90,8 @@ app.use(
 app.use("/user", userRouter);
 app.use("/employee", employeeRouter);
 app.use("/post", postRouter);
-app.post("/uploadAvatar", upload.single("avatar"), (req, res, next) => {
-    console.log(req.file);
-    res.json({
-        status: true,
-        message: "Upload successful!",
-    });
-});
+
+app.post("/upload", checkLogin, upload.single("image"), updateDatabase);
 
 app.use(notFoundHandler);
 app.use(errorHandler);

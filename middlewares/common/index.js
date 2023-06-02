@@ -9,6 +9,7 @@ module.exports = {
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
             const { phone, userId } = decoded;
             req.body.auth = { phone, userId };
+            req.auth = { phone, userId };
             next();
         } catch (err) {
             next("Authentication failed!");

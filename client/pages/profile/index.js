@@ -4,10 +4,12 @@ import swal from 'sweetalert';
 import { SocketContext } from '../socketContext';
 import BasicData from '../../components/Profile/BasicData';
 import styles from '../../styles/styles.module.scss';
+import axios from 'axios';
 
 const Index = () => {
     const [rateValue, setRateValue] = useState(null);
     const [rate, setRate] = useState(10.0);
+    const [file, setFile] = useState(null);
     const socket = useContext(SocketContext);
 
     const ratingHandler = rate => {
@@ -53,6 +55,31 @@ const Index = () => {
             });
     };
 
+    const uploadFile = () => {
+        if (!file) {
+            swal('No file selected!', { icon: 'error' });
+            return;
+        }
+
+        const fd = new FormData();
+        fd.append('image', file);
+
+        axios
+            .post(process.env.BASE_URL + '/upload', fd, {
+                onUploadProgress: ProgressEvent => {
+                    console.log(ProgressEvent.progress * 100);
+                },
+                headers: {
+                    authorization:
+                        'Bearer ' + getCookie(process.env.ACCESS_TOKEN)
+                }
+            })
+            .then(res => {
+                console.log(res);
+            })
+            .catch(err => swal(err.message, { icon: 'error' }));
+    };
+
     socket.off('updateRating').on('updateRating', d => {
         getRate();
     });
@@ -83,6 +110,7 @@ const Index = () => {
                                 className="w-full bg-slate-200 rounded px-2 py-1"
                                 type="file"
                                 accept=".jpeg, .jpg, .png"
+                                onChange={e => setFile(e.target.files[0])}
                             />
                             <input
                                 className={[
@@ -90,9 +118,8 @@ const Index = () => {
                                     styles.faceLoginBtn
                                 ].join(' ')}
                                 type="button"
-                                id="submit"
-                                name="submit"
                                 value="Upload"
+                                onClick={uploadFile}
                             />
                         </div>
 
