@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { getCookie } from 'cookies-next';
+import { useRouter } from 'next/router';
 import swal from 'sweetalert';
 import { SocketContext } from '../socketContext';
 import BasicData from '../../components/Profile/BasicData';
@@ -11,6 +12,7 @@ const Index = () => {
     const [rate, setRate] = useState(10.0);
     const [file, setFile] = useState(null);
     const socket = useContext(SocketContext);
+    const router = useRouter();
 
     const ratingHandler = rate => {
         rate = parseFloat(rate);
@@ -75,7 +77,10 @@ const Index = () => {
                 }
             })
             .then(res => {
-                console.log(res);
+                if (res.status) {
+                    swal('Profile picture updated successfully!');
+                    router.reload(window.location.pathname);
+                }
             })
             .catch(err => swal(err.message, { icon: 'error' }));
     };

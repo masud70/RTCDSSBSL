@@ -1,13 +1,12 @@
 import { useQuery } from '@apollo/client';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { GET_USER_DATA } from '../graphql/query';
 import { getCookie } from 'cookies-next';
 
 const BasicData = () => {
-    const variables = {
-        token: getCookie(process.env.ACCESS_TOKEN)
-    };
-    const { loading, error, data } = useQuery(GET_USER_DATA, { variables });
+    const { loading, error, data } = useQuery(GET_USER_DATA, {
+        variables: { token: getCookie(process.env.ACCESS_TOKEN) }
+    });
 
     const keyArray = {
         nameBn: 'নাম (বাংলা)',
@@ -22,8 +21,8 @@ const BasicData = () => {
         if (keyArray[key]) {
             return (
                 <div className="flex bg-slate-300 px-2 py-1 rounded-sm text-sm font-bold text-slate-700">
-                    <div className='w-4/6'>{keyArray[key]}:</div>
-                    <div className='w-full'>{value}</div>
+                    <div className="w-4/6">{keyArray[key]}:</div>
+                    <div className="w-full">{value}</div>
                 </div>
             );
         } else return null;
@@ -52,14 +51,12 @@ const BasicData = () => {
                 <div className="w-full bg-slate-100 rounded p-1 items-center justify-center flex flex-col">
                     <img
                         className=" w-72 max-h-96 rounded"
-                        src="http://localhost:5000/images/masud.jpg"
+                        src={data.getUser.avatar}
                     />
                     <span className="text-xl font-bold text-slate-700">
                         Md. Masud Mazumder
                     </span>
-                    <span className="text-sm">
-                        ({data.getUser.designation})
-                    </span>
+                    <span className="text-sm">{data.getUser.designation}</span>
                 </div>
                 <div className="w-full md:px-24 bg-slate-100 rounded p-1 space-y-1">
                     <div className="font-bold w-full text-center text-lg">

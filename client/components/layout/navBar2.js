@@ -5,6 +5,9 @@ import Link from 'next/link';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
 import { logout } from '../../redux/state/authSlice';
+import { useQuery } from '@apollo/client';
+import { getCookie } from 'cookies-next';
+import { GET_USER_DATA } from '../graphql/query';
 
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ');
@@ -15,6 +18,10 @@ export default function Navbar2() {
     const auth = useSelector(state => state.auth);
     const dispatch = useDispatch();
     const router = useRouter();
+
+    const { loading, error, data } = useQuery(GET_USER_DATA, {
+        variables: { token: getCookie(process.env.ACCESS_TOKEN) }
+    });
 
     const logoutHandler = () => {
         dispatch(logout());
@@ -135,7 +142,15 @@ export default function Navbar2() {
                                                     </span>
                                                     <img
                                                         className="h-8 w-8 rounded-full"
-                                                        src="http://192.168.0.200:5000/images/profile.png"
+                                                        src={
+                                                            data &&
+                                                            data.getUser.avatar
+                                                                ? data.getUser
+                                                                      .avatar
+                                                                : process.env
+                                                                      .BASE_URL +
+                                                                  '/uploads/images/profile.png'
+                                                        }
                                                         alt="User Profile"
                                                     />
                                                 </Menu.Button>
