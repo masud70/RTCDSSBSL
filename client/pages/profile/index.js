@@ -1,11 +1,14 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { getCookie } from 'cookies-next';
 import swal from 'sweetalert';
+import { SocketContext } from '../socketContext';
+import BasicData from '../../components/Profile/BasicData';
+import styles from '../../styles/styles.module.scss';
 
 const Index = () => {
     const [rateValue, setRateValue] = useState(null);
     const [rate, setRate] = useState(10.0);
+    const socket = useContext(SocketContext);
 
     const ratingHandler = rate => {
         rate = parseFloat(rate);
@@ -50,44 +53,80 @@ const Index = () => {
             });
     };
 
+    socket.off('updateRating').on('updateRating', d => {
+        getRate();
+    });
+
     useEffect(() => {
         getRate();
     }, []);
 
     return (
         <>
-            <div className="mx-0 pb-2 bg-white">
-                <div className="w-full items-center justify-center flex font-bold text-2xl py-3">
-                    My Profile
-                </div>
-                <div className="space-y-1 mt-1">
-                    <div className="w-full items-center bg-gray-400 py-2">
-                        <div className="text-center text-xl font-bold text-gray-800">
-                            Site Rating
+            <div className="mx-0 pb-2 bg-white flex flex-col items-center">
+                <div className="lg:w-4/6 w-full sm:w-5/6 rounded overflow-hidden">
+                    <div className="w-full items-center justify-center flex font-bold text-2xl py-3">
+                        My Profile
+                    </div>
+                    <div className="space-y-1 mt-1">
+                        {/* Basic Info Section */}
+                        <div className="w-full items-center bg-gray-400 py-2">
+                            <BasicData />
                         </div>
-                        <div className="items-center">
-                            <div className="text-center">
-                                Current Rating: {rate}/10
+
+                        {/* Profile Picture Update Section */}
+                        <div className="w-full items-center bg-gray-400 py-2 flex justify-between px-2 flex-col sm:flex-row sm:space-x-2 space-y-2 sm:space-y-0">
+                            <span className="w-full bg-gray-400 rounded px-2 py-1 text-center">
+                                Upload Profile Picture
+                            </span>
+                            <input
+                                className="w-full bg-slate-200 rounded px-2 py-1"
+                                type="file"
+                                accept=".jpeg, .jpg, .png"
+                            />
+                            <input
+                                className={[
+                                    'w-full rounded px-2 py-1 cursor-pointer',
+                                    styles.faceLoginBtn
+                                ].join(' ')}
+                                type="button"
+                                id="submit"
+                                name="submit"
+                                value="Upload"
+                            />
+                        </div>
+
+                        <div className="w-full items-center bg-gray-400 py-2">
+                            <div className="text-center text-xl font-bold text-gray-800">
+                                Site Rating
                             </div>
-                            <div className="items-center flex justify-center space-x-1">
-                                <input
-                                    className="px-2 rounded text-center"
-                                    type="text"
-                                    placeholder="Input rating..."
-                                    value={rateValue}
-                                    onChange={e => {
-                                        const rate = e.target.value;
-                                        setRateValue(rate);
-                                    }}
-                                />
-                                <input
-                                    className="px-2 rounded bg-slate-700 text-white cursor-pointer"
-                                    type="button"
-                                    value="Rate Now"
-                                    onClick={() => {
-                                        ratingHandler(rateValue);
-                                    }}
-                                />
+                            <div className="items-center">
+                                <div className="text-center">
+                                    Current Rating: {rate.toFixed(2)}/10
+                                </div>
+                                <div className="items-center flex justify-center space-x-1">
+                                    <input
+                                        className="px-2 rounded text-center"
+                                        type="text"
+                                        placeholder="Input rating..."
+                                        value={rateValue}
+                                        onChange={e => {
+                                            const rate = e.target.value;
+                                            setRateValue(rate);
+                                        }}
+                                    />
+                                    <input
+                                        className={
+                                            'px-2 rounded bg-slate-700 text-white cursor-pointer ' +
+                                            styles.login_button
+                                        }
+                                        type="button"
+                                        value="Rate Now"
+                                        onClick={() => {
+                                            ratingHandler(rateValue);
+                                        }}
+                                    />
+                                </div>
                             </div>
                         </div>
                     </div>

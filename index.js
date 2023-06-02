@@ -27,6 +27,10 @@ const userRouter = require("./router/userRouter");
 const employeeRouter = require("./router/employeeRouter");
 const postRouter = require("./router/postRouter");
 const { upload } = require("./middlewares/common/imageUpload");
+const { GraphQLObjectType, GraphQLSchema } = require("graphql");
+const userMutations = require("./graphql/user/mutations");
+const userQuery = require("./graphql/user/query");
+const { graphqlHTTP } = require("express-graphql");
 
 io.on("connection", (socket) => {
     // console.log("User connected");
@@ -45,6 +49,28 @@ app.use((req, res, next) => {
     req.db = db;
     return next();
 });
+
+// QraphQL
+const Query = new GraphQLObjectType({
+    name: "Query",
+    fields: { ...userQuery },
+});
+const Mutation = new GraphQLObjectType({
+    name: "Mutation",
+    fields: () => ({
+        ...userMutations,
+    }),
+});
+app.use(
+    "/graphql",
+    graphqlHTTP({
+        graphiql: true,
+        schema: new GraphQLSchema({
+            query: Query,
+            mutation: Mutation,
+        }),
+    })
+);
 
 //database connection
 // mongoose
@@ -70,6 +96,7 @@ app.post("/uploadAvatar", upload.single("avatar"), (req, res, next) => {
         message: "Upload successful!",
     });
 });
+
 app.use(notFoundHandler);
 app.use(errorHandler);
 

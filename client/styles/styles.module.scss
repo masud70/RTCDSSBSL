@@ -1,0 +1,31 @@
+$color_primary: blue;
+$color_gray_medium: #27374d;
+$button_color_primary: #0c134f;
+$white: #eaeaea;
+$font_size_medium: 18px;
+$hover_color: #4d76bc;
+
+.myClass {
+    color: $color_primary;
+}
+
+.gray_medium {
+    color: $color_gray_medium;
+    font-style: italic;
+}
+
+.login_button {
+    background-color: $button_color_primary;
+    cursor: pointer;
+}
+
+.faceLoginBtn {
+    background-color: $button_color_primary;
+    color: $white;
+    font-size: $font_size_medium;
+    border-radius: 4px;
+    padding: 4px 8px;
+    :hover {
+        background-color: $hover_color;
+    }
+}

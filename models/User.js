@@ -44,9 +44,6 @@ module.exports = (sequelize, DataTypes) => {
         dateOfPRL: {
             type: DataTypes.STRING,
         },
-        currentOfficeJoinDate: {
-            type: DataTypes.STRING,
-        },
         status: {
             type: DataTypes.BOOLEAN,
             defaultValue: true,

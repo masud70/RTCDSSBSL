@@ -148,6 +148,20 @@ function index() {
                         </div>
                         <div className="hidden lg:w-1/6"></div>
                     </div>
+
+                    {/* Pegination */}
+                    {/* <div className="w-full mt-2 bg-gray-200 rounded p-1">
+                        <div className='w-full flex flex-row items-center justify-center space-x-2'>
+                            <button className='bg-green-700 p-1 font-bold text-gray-50 text-sm text-center rounded min-w-[30px]'>Start</button>
+                            <button className='bg-green-700 p-1 font-bold text-gray-50 text-sm text-center rounded min-w-[30px]'>Pre</button>
+                            <button className='bg-green-700 p-1 font-bold text-gray-50 text-sm text-center rounded min-w-[30px]'>1</button>
+                            <button className='bg-green-700 p-1 font-bold text-gray-50 text-sm text-center rounded min-w-[30px]'>2</button>
+                            <button className='bg-green-700 p-1 font-bold text-gray-50 text-sm text-center rounded min-w-[30px]'>3</button>
+                            <span className='text-lg'>. . .</span>
+                            <button className='bg-green-700 p-1 font-bold text-gray-50 text-sm text-center rounded min-w-[30px]'>Next</button>
+                            <button className='bg-green-700 p-1 font-bold text-gray-50 text-sm text-center rounded min-w-[30px]'>Last</button>
+                        </div>
+                    </div> */}
                 </div>
                 {/* <div className="w-full flex flex-col">
                     <div className="bg-gray-800 p-2 font-bold text-white text-2xl text-center my-1">

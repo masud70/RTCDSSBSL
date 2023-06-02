@@ -75,9 +75,10 @@ function Index({ data }) {
                     <div className="w-full bg-gray-600 p-1 font-bold text-gray-100 text-xl rounded">
                         {item.User && item.User.nameEn}
                     </div>
-                    <pre className="w-full p-1 py-2">
+                    <div className="w-full p-1 py-2 flex flex-wrap">
                         {item && parse(item.body + '')}
-                    </pre>
+                    </div>
+
                     <div className="w-full p-1 flex divide-x divide-slate-500 border-t border-gray-500">
                         <div
                             className={`text-center w-2/6 cursor-pointer ${
@@ -148,8 +149,10 @@ function Index({ data }) {
                                             </div>
                                             <div className="w-11/12">
                                                 {item.body}
-                                                <br/>
-                                                <span className='text-[8px] text-gray-500'>{item.time}</span>
+                                                <br />
+                                                <span className="text-[8px] text-gray-500">
+                                                    {item.time}
+                                                </span>
                                             </div>
                                         </div>
                                     );

@@ -102,9 +102,10 @@ module.exports = {
                         raw: true,
                     })
                         .then((data) => {
-                            if (data)
+                            if (data) {
+                                req.io.emit("updateRating", data.rate);
                                 res.json({ status: true, rate: data.rate });
-                            else next("There was an error.");
+                            } else next("There was an error.");
                         })
                         .catch((error2) => next(error2.message));
                 } else next("There was an error.");
@@ -124,6 +125,21 @@ module.exports = {
                 else next("There was an error.");
             })
             .catch((error2) => next(error2.message));
+    },
+
+    getImageLink: (req, res, next) => {
+        const phone = req.params.phone;
+
+        req.db.User.findOne({ where: { phone: phone } })
+            .then((data) => {
+                if (data) res.json({ status: true, imageLink: data.avatar });
+                else
+                    res.json({
+                        status: false,
+                        message: "Phone number is not registered.",
+                    });
+            })
+            .catch((error) => next(error.message));
     },
 
     // ============================================================== //

@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import TextField from '@mui/material/TextField';
 import LoadingButton from '@mui/lab/LoadingButton';
 import LoginIcon from '@mui/icons-material/Login';
@@ -7,6 +7,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
 import swal from 'sweetalert';
 import { login } from '../../redux/state/authSlice';
+import styles from '../../styles/styles.module.scss';
+import { TweenMax, Power3 } from 'gsap';
+import Link from 'next/link';
 
 const index = () => {
     const [loading, setLoading] = React.useState(false);
@@ -15,6 +18,9 @@ const index = () => {
     const auth = useSelector(state => state.auth);
     const dispatch = useDispatch();
     const router = useRouter();
+
+    let logoItem = useRef(null);
+    let textItem = useRef(null);
 
     const onChangePhone = val => {
         if (val.length > 11) return false;
@@ -64,6 +70,32 @@ const index = () => {
         if (auth.status) {
             router.push('/');
         }
+        TweenMax.fromTo(
+            logoItem,
+            1,
+            {
+                opacity: 0,
+                y: -60,
+                ease: Power3.easeOut
+            },
+            {
+                y: -10,
+                opacity: 5
+            }
+        );
+        TweenMax.fromTo(
+            textItem,
+            1,
+            {
+                opacity: 0,
+                y: 30
+            },
+            {
+                y: 0,
+                opacity: 5,
+                delay: 0.5
+            }
+        );
     }, []);
 
     return (
@@ -83,14 +115,26 @@ const index = () => {
                         <div className="flex justify-center items-center flex-col space-y-8 w-full">
                             <div className="flex justify-center items-center flex-col">
                                 <div className="flex justify-center items-center">
-                                    <Image
+                                    <img
+                                        ref={el => {
+                                            logoItem = el;
+                                        }}
+                                        className="opacity-0"
                                         src="/images/logo-bd.png"
                                         width={100}
                                         height={100}
                                         alt="Logo"
                                     />
                                 </div>
-                                <div className="font-bold text-3xl text-gray-700">
+
+                                <div
+                                    ref={el => {
+                                        textItem = el;
+                                    }}
+                                    className={
+                                        `font-bold text-3xl opacity-0 ` +
+                                        styles.gray_medium
+                                    }>
                                     WELCOME
                                 </div>
                             </div>
@@ -116,15 +160,22 @@ const index = () => {
                                         onPasswordChange(e.target.value)
                                     }
                                 />
-                                <LoadingButton
-                                    onClick={onSubmit}
-                                    endIcon={<LoginIcon />}
-                                    loading={loading}
-                                    loadingPosition="end"
-                                    variant="contained"
-                                    className="bg-slate-600">
-                                    LOGIN
-                                </LoadingButton>
+                                <div className="w-full flex flex-row justify-between">
+                                    <Link
+                                        className={styles.faceLoginBtn}
+                                        href={'/login/faceLogin'}>
+                                        Face Login
+                                    </Link>
+                                    <LoadingButton
+                                        onClick={onSubmit}
+                                        endIcon={<LoginIcon />}
+                                        loading={loading}
+                                        loadingPosition="end"
+                                        variant="contained"
+                                        className={styles.login_button}>
+                                        LOGIN
+                                    </LoadingButton>
+                                </div>
                             </div>
                         </div>
                     </div>

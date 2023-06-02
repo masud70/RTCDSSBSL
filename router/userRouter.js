@@ -13,6 +13,7 @@ const {
     verifyOtp,
     ratingHandler,
     getRating,
+    getImageLink,
 } = require("../controllers/userController");
 const { checkLogin } = require("../middlewares/common");
 
@@ -33,5 +34,6 @@ router.get("/checkMail/:email", checkMail);
 router.get("/verifyOtp/:data", verifyOtp);
 router.get("/rate/:rate", checkLogin, ratingHandler);
 router.get("/getRate", getRating);
+router.get("/getImageLink/:phone", getImageLink);
 
 module.exports = router;
