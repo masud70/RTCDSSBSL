@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import swal from 'sweetalert';
 import parse from 'html-react-parser';
-import { useSelector } from 'react-redux';
 import dayjs from 'dayjs';
+import { getCookie } from 'cookies-next';
+var relativeTime = require('dayjs/plugin/relativeTime');
+dayjs.extend(relativeTime);
 
 function Index({ data }) {
     const [open, setOpen] = useState(false);
-    const [item, setItem] = useState({});
     const [comment, setComment] = useState('');
-    const auth = useSelector(state => state.auth);
 
     const reactionHander = reactionType => {
         const url = process.env.BASE_URL + '/post/reaction';
@@ -17,7 +17,7 @@ function Index({ data }) {
             headers: {
                 Accept: 'application/json',
                 'Content-Type': 'application/json',
-                authorization: 'Bearer ' + auth.token
+                authorization: 'Bearer ' + getCookie(process.env.ACCESS_TOKEN)
             },
             body: JSON.stringify({ type: reactionType, postId: data.id })
         })
@@ -40,19 +40,19 @@ function Index({ data }) {
                 headers: {
                     Accept: 'application/json',
                     'Content-Type': 'application/json',
-                    authorization: 'Bearer ' + auth.token
+                    authorization:
+                        'Bearer ' + getCookie(process.env.ACCESS_TOKEN)
                 },
                 body: JSON.stringify({
                     commentBody: comment.replace('\n', ''),
                     commentTime: dayjs().unix().toString(),
-                    postId: item.id
+                    postId: data.id
                 })
             })
                 .then(r => r.json())
                 .then(res => {
                     if (res.status) {
                         setComment('');
-                        setOpen(false);
                     } else {
                         swal(res.message, { icon: 'error' });
                     }
@@ -63,104 +63,97 @@ function Index({ data }) {
         }
     };
 
-    useEffect(() => {
-        setItem(data);
-        console.log(auth);
-    }, [data]);
+    if (!data)
+        return (
+            <>
+                <div>Loading...</div>
+            </>
+        );
 
     return (
         <>
-            {item && (
-                <div className="w-full bg-gray-100 rounded overflow-hidden p-1">
-                    <div className="w-full bg-gray-600 p-1 font-bold text-gray-100 text-xl rounded">
-                        {item.User && item.User.nameEn}
-                    </div>
-                    <div className="w-full p-1 py-2 flex flex-wrap">
-                        {item && parse(item.body + '')}
-                    </div>
+            <div className="w-full bg-gray-100 rounded overflow-hidden p-1">
+                <div className="w-full bg-gray-600 p-1 font-bold text-gray-100 text-xl rounded">
+                    {data.User.nameEn}
+                </div>
+                <div className="w-full p-1 py-2 flex flex-wrap">
+                    {parse(data.body + '')}
+                </div>
 
-                    <div className="w-full p-1 flex divide-x divide-slate-500 border-t border-gray-500">
-                        <div
-                            className={`text-center w-2/6 cursor-pointer ${
-                                auth.userData &&
-                                data.reactions.filter(
-                                    r => r.UserId === auth.userData.id
-                                )
-                                    ? 'bg-blue-400'
-                                    : ''
-                            }rounded-full`}
-                            onClick={() => reactionHander('like')}>
-                            Like (
-                            {
-                                data.reactions.filter(
-                                    reaction => reaction.type === 'like'
-                                ).length
-                            }
-                            )
-                        </div>
-                        <div
-                            className="text-center w-2/6 cursor-pointer"
-                            onClick={() => reactionHander('dislike')}>
-                            Dislike (
-                            {
-                                data.reactions.filter(
-                                    reaction => reaction.type === 'dislike'
-                                ).length
-                            }
-                            )
-                        </div>
-                        <div
-                            className="text-center w-2/6 cursor-pointer"
-                            onClick={() => setOpen(!open)}>
-                            Comment (
-                            {item && item.comments && item.comments.length})
-                        </div>
+                <div className="w-full p-1 flex divide-x divide-slate-500 border-t border-gray-500">
+                    <div
+                        className={`text-center w-2/6 cursor-pointer rounded-full`}
+                        onClick={() => reactionHander('like')}>
+                        Like (
+                        {
+                            data.Reactions.filter(
+                                reaction => reaction.type === 'like'
+                            ).length
+                        }
+                        )
                     </div>
                     <div
-                        className={`w-full border-t border-gray-500 p-1 ${
-                            open ? '' : 'hidden'
-                        } ease-in-out duration-1000`}>
-                        <div className="w-full">
-                            <textarea
-                                className="w-full p-1 rounded overflow-hidden focus:border-none target:border-none open:border-none"
-                                rows={1}
-                                placeholder="Write your comment here..."
-                                onKeyUp={e => {
-                                    commentHandler(e);
-                                }}
-                                value={comment}
-                                onChange={e => setComment(e.target.value)}
-                            />
-                        </div>
-                        <div className="w-full space-y-1">
-                            {item &&
-                                item.comments &&
-                                item.comments.map((item, id) => {
-                                    return (
-                                        <div
-                                            className="flex space-x-2 items-center bg-slate-300 px-1 py-2 rounded"
-                                            key={id}>
-                                            <div className="w-1/12">
-                                                <img
-                                                    className="inline-block h-6 w-6 rounded-full ring-2 ring-white"
-                                                    src="http://192.168.0.200:5000/images/profile.png"
-                                                    alt="User"
-                                                />
-                                            </div>
-                                            <div className="w-11/12">
-                                                {item.body}
-                                                <br />
-                                                <span className="text-[8px] text-gray-500">
-                                                    {item.time}
-                                                </span>
-                                            </div>
-                                        </div>
-                                    );
-                                })}
-                        </div>
+                        className="text-center w-2/6 cursor-pointer"
+                        onClick={() => reactionHander('dislike')}>
+                        Dislike (
+                        {
+                            data.Reactions.filter(
+                                reaction => reaction.type === 'dislike'
+                            ).length
+                        }
+                        )
+                    </div>
+                    <div
+                        className="text-center w-2/6 cursor-pointer"
+                        onClick={() => setOpen(!open)}>
+                        Comment ({data.Comments.length})
                     </div>
                 </div>
-            )}
+                <div
+                    className={`w-full border-t border-gray-500 p-1 ${
+                        open ? '' : 'hidden'
+                    } ease-in-out duration-1000`}>
+                    <div className="w-full">
+                        <textarea
+                            className="w-full p-1 rounded overflow-hidden focus:border-none target:border-none open:border-none"
+                            rows={1}
+                            placeholder="Write your comment here..."
+                            onKeyUp={e => {
+                                commentHandler(e);
+                            }}
+                            value={comment}
+                            onChange={e => setComment(e.target.value)}
+                        />
+                    </div>
+                    <div className="w-full space-y-1">
+                        {data.Comments.length > 0 &&
+                            data.Comments.map((item, id) => {
+                                return (
+                                    <div
+                                        className="flex space-x-2 items-center bg-slate-300 px-1 py-1 rounded"
+                                        key={id}>
+                                        <div className="w-[30px]">
+                                            <img
+                                                className="inline-block h-6 w-6 rounded-full ring-2 ring-white"
+                                                src="http://192.168.0.200:5000/uploads/images/profile.png"
+                                                alt="User"
+                                            />
+                                        </div>
+                                        <div className="w-full">
+                                            {item.body}
+                                            <br className="p-0 m-0" />
+                                            <span className="text-[8px] text-gray-500">
+                                                {dayjs
+                                                    .unix(item.time)
+                                                    .fromNow()}
+                                            </span>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                    </div>
+                </div>
+            </div>
         </>
     );
 }

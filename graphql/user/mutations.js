@@ -19,9 +19,7 @@ const createUser = {
     },
     resolve: async (parent, args, context, info) => {
         args.password = bcrypt.hashSync("User@123", 10);
-
         const user = await db.User.create(args);
-
         return user;
     },
 };

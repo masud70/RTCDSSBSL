@@ -48,8 +48,8 @@ export default function Navbar2() {
         },
         {
             name: 'Timeline',
-            href: '/timeline',
-            current: router.pathname === '/timeline'
+            href: '/timeline/0',
+            current: router.pathname.includes('timeline')
         }
     ];
 

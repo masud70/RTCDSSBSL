@@ -41,6 +41,7 @@ const BasicData = () => {
             <>
                 <div className="w-full text-center font-bold text-xl text-gray-800">
                     An error occured!
+                    {error.message}
                 </div>
             </>
         );
