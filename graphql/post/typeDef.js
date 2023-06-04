@@ -4,7 +4,7 @@ const {
     GraphQLList,
     GraphQLInt,
 } = require("graphql");
-const UserType = require("../user/typeDef");
+const { UserType } = require("../user/typeDef");
 
 module.exports = {
     PostType: new GraphQLObjectType({

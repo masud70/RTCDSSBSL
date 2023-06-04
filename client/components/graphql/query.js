@@ -54,5 +54,23 @@ module.exports = {
                 end
             }
         }
+    `,
+
+    FACELOGIN_QUERY: gql`
+        query FaceLogin($phone: String!, $result: Float!) {
+            faceLogin(phone: $phone, result: $result) {
+                status
+                message
+                token
+                user {
+                    id
+                    nameEn
+                    nameBn
+                    designation
+                    phone
+                    avatar
+                }
+            }
+        }
     `
 };

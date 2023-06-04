@@ -10,16 +10,18 @@ import { login } from '../../redux/state/authSlice';
 import styles from '../../styles/styles.module.scss';
 import { TweenMax, Power3 } from 'gsap';
 import * as faceapi from 'face-api.js';
+import { useLazyQuery } from '@apollo/client';
+import { FACELOGIN_QUERY } from '../../components/graphql/query';
 
 const index = () => {
-    const [loading, setLoading] = React.useState(false);
+    const [load, setLoad] = useState(false);
     const [phone, setPhone] = useState('');
     const [phoneError, setPhoneError] = useState(null);
     const [verifiedPhone, setVerifiedPhone] = useState(false);
     const auth = useSelector(state => state.auth);
     const dispatch = useDispatch();
     const router = useRouter();
-    const [result, setResult] = useState();
+    const [result, setResult] = useState({});
     const videoRef = useRef();
     const canvasRef = useRef();
     const useTiny = true;
@@ -27,6 +29,13 @@ const index = () => {
 
     let logoItem = useRef(null);
     let textItem = useRef(null);
+
+    const [faceLogin, { loading, data }] = useLazyQuery(FACELOGIN_QUERY, {
+        variables: {
+            phone: phone,
+            result: result.distance
+        }
+    });
 
     const dimensions = {
         width: 800,
@@ -46,7 +55,7 @@ const index = () => {
     };
 
     const onSubmit = phoneNumber => {
-        setLoading(true);
+        setLoad(true);
         fetch(process.env.BASE_URL + '/user/getImageLink/' + phoneNumber)
             .then(r => r.json())
             .then(response => {
@@ -62,7 +71,7 @@ const index = () => {
             })
             .catch(err => swal(err.message, { icon: 'error' }))
             .finally(() => {
-                setLoading(false);
+                setLoad(false);
             });
     };
 
@@ -173,6 +182,26 @@ const index = () => {
         loadModels();
     }, []);
 
+    useEffect(() => {
+        if (
+            result && result.distance >= 0.4 &&
+            !loading &&
+            result.label === 'User'
+        ) {
+            faceLogin();
+        }
+    }, [result]);
+
+    if (!loading && data) {
+        dispatch(
+            login({
+                token: data.faceLogin.token,
+                userData: data.faceLogin.user
+            })
+        );
+        router.push('/');
+    }
+
     return (
         <>
             <div className="absolute top-0 bg-slate-200 h-screen w-screen flex items-center justify-center  shadow-xl">
@@ -234,7 +263,7 @@ const index = () => {
                                         <LoadingButton
                                             onClick={() => onSubmit(phone)}
                                             endIcon={<LoginIcon />}
-                                            loading={loading}
+                                            loading={load}
                                             loadingPosition="end"
                                             variant="contained"
                                             className={styles.login_button}>
@@ -255,9 +284,11 @@ const index = () => {
                                             <canvas ref={canvasRef} />
                                         </div>
                                     </div>
-                                    <div className="text-xl">
+                                    <div className="text-xl text-center font-bold">
                                         Scanning...{' '}
-                                        {result && result.toString()}
+                                        <span className="block text-sm">
+                                            {result.label && result.toString()}
+                                        </span>
                                     </div>
                                 </>
                             )}

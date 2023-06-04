@@ -168,7 +168,6 @@ module.exports = {
     },
 
     loginController: (req, res, next) => {
-        console.log("Login data", req.body);
         req.db.User.findOne({ where: { phone: req.body.phone } })
             .then((user) => {
                 console.log(user);
