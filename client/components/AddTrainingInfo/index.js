@@ -13,65 +13,60 @@ import { useDispatch, useSelector } from 'react-redux';
 import swal from 'sweetalert';
 import { updateCourseInfoModalToggle } from '../../redux/state/common/commonSlice';
 import dayjs from 'dayjs';
+import { useMutation } from '@apollo/client';
+import { INSERT_UPDATE_COURSE_MUTATION } from '../graphql/query';
+import { useRouter } from 'next/router';
 
 export default function index() {
     const openModal = useSelector(
         state => state.common.isUpdateCourseInfoModalOpen
     );
 
-    const data = useSelector(state => state.common.updateCourseInfoData);
-    const auth = useSelector(state => state.auth);
+    const dataPrev = useSelector(state => state.common.updateCourseInfoData);
     const dispatch = useDispatch();
     const [formData, setFormData] = useState({});
+    const router = useRouter();
 
     const handleClose = () => {
         dispatch(updateCourseInfoModalToggle());
     };
 
-    const submitForm = () => {
-        const url = process.env.BASE_URL + '/employee/updateCourse';
-        fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: 'Bearer' + auth.token
-            },
-            body: JSON.stringify(formData)
-        })
-            .then(r => r.json())
-            .then(res => {
-                if (res.status) {
-                    swal({
-                        title: 'Success',
-                        text:
-                            res.message +
-                            '\nPlease reload to see updated result.',
-                        icon: 'success'
-                    });
-                    setFormData({});
-                    handleClose();
-                } else {
-                    swal({
-                        title: 'Error',
-                        text: 'There is an error. Please check all the fields.',
-                        icon: 'error'
-                    });
-                }
-            })
-            .catch(err => {
-                swal({ title: 'Error', text: err.message, icon: 'error' });
-            });
-    };
+    const [insertOrUpdate, { loading, error, data }] = useMutation(
+        INSERT_UPDATE_COURSE_MUTATION
+    );
 
     useEffect(() => {
-        console.log(data);
-        if (data.Course) {
-            setFormData(data.Course);
+        if (dataPrev.Course) {
+            setFormData({
+                courseName: dataPrev.Course.courseName,
+                startDate: dataPrev.Course.startDate,
+                endDate: dataPrev.Course.endDate
+            });
         } else {
             setFormData({});
         }
-        setFormData(pre => ({ ...pre, userId: data.id }));
-    }, [data]);
+        setFormData(pre => ({ ...pre, UserId: dataPrev.id }));
+    }, [dataPrev]);
+
+    if (!loading && data) {
+        swal({
+            title: 'Success',
+            text:
+                data.insertOrUpdateCourse.message +
+                '\nPlease wait a few second.',
+            icon: 'success'
+        });
+        setTimeout(() => {
+            router.reload(window.location.pathname);
+        }, 3000);
+    }
+    if (error) {
+        swal({
+            title: 'Error',
+            text: error.message,
+            icon: 'error'
+        });
+    }
 
     return (
         <>
@@ -113,10 +108,11 @@ export default function index() {
                                     label="তারিখ"
                                     value={parseInt(formData.startDate)}
                                     onChange={val => {
-                                        console.log(dayjs(val).unix());
                                         setFormData(pre => ({
                                             ...pre,
-                                            startDate: dayjs(val).unix() * 1000
+                                            startDate: (
+                                                dayjs(val).unix() * 1000
+                                            ).toString()
                                         }));
                                     }}
                                     renderInput={params => (
@@ -133,7 +129,9 @@ export default function index() {
                                     onChange={val => {
                                         setFormData(pre => ({
                                             ...pre,
-                                            endDate: dayjs(val).unix() * 1000
+                                            endDate: (
+                                                dayjs(val).unix() * 1000
+                                            ).toString()
                                         }));
                                     }}
                                     renderInput={params => (
@@ -146,7 +144,13 @@ export default function index() {
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClose}>Cancel</Button>
-                    <Button onClick={() => submitForm()}>Save Now</Button>
+                    <Button
+                        onClick={() => {
+                            console.log(formData);
+                            insertOrUpdate({ variables: formData });
+                        }}>
+                        Save Now
+                    </Button>
                 </DialogActions>
             </Dialog>
         </>

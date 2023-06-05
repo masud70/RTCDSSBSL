@@ -98,5 +98,42 @@ module.exports = {
                 }
             }
         }
+    `,
+
+    GET_COURSE_BY_USER_ID: gql`
+        query GetCourseById($UserId: String!) {
+            getCourseById(UserId: $UserId) {
+                status
+                message
+                id
+                courseName
+                startDate
+                endDate
+            }
+        }
+    `,
+
+    INSERT_UPDATE_COURSE_MUTATION: gql`
+        mutation InsertOrUpdate(
+            $UserId: String!
+            $courseName: String!
+            $startDate: String!
+            $endDate: String!
+        ) {
+            insertOrUpdateCourse(
+                UserId: $UserId
+                courseName: $courseName
+                startDate: $startDate
+                endDate: $endDate
+            ) {
+                status
+                message
+                id
+                UserId
+                courseName
+                startDate
+                endDate
+            }
+        }
     `
 };
