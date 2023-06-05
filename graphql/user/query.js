@@ -1,38 +1,10 @@
-const {
-    GraphQLString,
-    GraphQLList,
-    GraphQLFloat,
-    GraphQLObjectType,
-} = require("graphql");
-const { UserType, LoginType } = require("./typeDef");
+const { GraphQLString, GraphQLList, GraphQLFloat } = require("graphql");
+const { UserType, LoginType, CourseType } = require("./typeDef");
 const jwt = require("jsonwebtoken");
 const db = require("../../models");
 const minConfidence = 0.4;
 
 module.exports = {
-    getUser: {
-        type: UserType,
-        args: {
-            token: { type: GraphQLString },
-        },
-        resolve: async (parent, args, context, info) => {
-            const decoded = jwt.verify(args.token, process.env.JWT_SECRET);
-            const { userId } = decoded;
-            console.log(userId);
-            const user = await db.User.findOne({ where: { id: userId } });
-            return user;
-        },
-    },
-
-    getAllUser: {
-        type: new GraphQLList(UserType),
-        args: {},
-        resolve: async (parent, args, context, info) => {
-            const users = await db.User.findAll();
-            return users;
-        },
-    },
-
     faceLogin: {
         type: LoginType,
         args: {
@@ -77,6 +49,36 @@ module.exports = {
             };
         },
     },
-};
 
-// module.exports = { getUser, getAllUser, faceLogin };
+    getUser: {
+        type: UserType,
+        args: {
+            token: { type: GraphQLString },
+        },
+        resolve: async (parent, args, context, info) => {
+            const decoded = jwt.verify(args.token, process.env.JWT_SECRET);
+            const { userId } = decoded;
+            console.log(userId);
+            const user = await db.User.findOne({ where: { id: userId } });
+            return user;
+        },
+    },
+
+    getAllUser: {
+        type: new GraphQLList(UserType),
+        args: {},
+        resolve: async (parent, args, context, info) => {
+            const users = await db.User.findAll({
+                include: ["Course"],
+                where: { status: true },
+            });
+
+            let ret = [];
+
+            for (let i = 0; i < users.length; i++) {
+                ret.push({ ...users[i].dataValues, slNo: i + 1 });
+            }
+            return ret;
+        },
+    },
+};

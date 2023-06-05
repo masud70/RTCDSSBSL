@@ -1,9 +1,15 @@
-const { GraphQLObjectType, GraphQLString, GraphQLBoolean } = require("graphql");
+const {
+    GraphQLObjectType,
+    GraphQLString,
+    GraphQLBoolean,
+    GraphQLInt,
+} = require("graphql");
 
 module.exports = {
     UserType: new GraphQLObjectType({
         name: "User",
         fields: () => ({
+            slNo: { type: GraphQLInt },
             id: { type: GraphQLString },
             nameBn: { type: GraphQLString },
             nameEn: { type: GraphQLString },
@@ -15,6 +21,8 @@ module.exports = {
             avatar: { type: GraphQLString },
             currentOfficeJoinDate: { type: GraphQLString },
             dateOfPRL: { type: GraphQLString },
+            role: { type: GraphQLString },
+            Course: { type: module.exports.CourseType },
         }),
     }),
 
@@ -25,6 +33,17 @@ module.exports = {
             status: { type: GraphQLBoolean },
             message: { type: GraphQLString },
             user: { type: module.exports.UserType },
+        }),
+    }),
+
+    CourseType: new GraphQLObjectType({
+        name: "Course",
+        fields: () => ({
+            id: { type: GraphQLString },
+            UserId: { type: GraphQLString },
+            courseName: { type: GraphQLString },
+            startDate: { type: GraphQLString },
+            endDate: { type: GraphQLString },
         }),
     }),
 };

@@ -1,11 +1,9 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React from 'react';
 import Box from '@mui/material/Box';
 import { useDispatch } from 'react-redux';
-import { SocketContext } from '../socketContext';
 import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
 import Tooltip from '@mui/material/Tooltip';
-import swal from 'sweetalert';
 import {
     DataGrid,
     GridToolbarContainer,
@@ -16,15 +14,16 @@ import {
 } from '@mui/x-data-grid';
 import { updateCourseInfoModalToggle } from '../../redux/state/common/commonSlice';
 import AddTrainingInfo from '../../components/AddTrainingInfo';
+import { useQuery } from '@apollo/client';
+import { ALL_USER_QUERY } from '../../components/graphql/query';
+import dayjs from 'dayjs';
 
 export default function Index() {
     const dispatch = useDispatch();
-    const [rows, setRows] = useState([]);
-    const socket = useContext(SocketContext);
 
     const columns = [
         {
-            field: 'id',
+            field: 'slNo',
             headerName: 'Sl No',
             width: 60
         },
@@ -64,38 +63,49 @@ export default function Index() {
         {
             field: 'currentOfficeJoinDate',
             headerName: 'বর্তমান অফিস যোগদানের তারিখ',
-            width: 140
+            width: 140,
+            valueGetter: x => dayjs.unix(x.value).format('DD/MM/YYYY')
         },
         {
             field: 'dateOfPRL',
             headerName: 'পিআরএল গমনের তারিখ',
-            width: 140
+            width: 140,
+            valueGetter: x => dayjs.unix(x.value).format('DD/MM/YYYY')
         },
         {
             field: 'dob',
             headerName: 'জন্ম তারিখ',
-            width: 110
+            width: 110,
+            valueGetter: x => dayjs.unix(x.value).format('DD/MM/YYYY')
         },
         {
             field: 'courseName',
             headerName: 'প্রশিক্ষন কোর্সের নাম',
             width: 200,
             valueGetter: data =>
-                data.row.courseInfo ? data.row.courseInfo.courseName : ''
+                data.row.Course ? data.row.Course.courseName : ''
         },
         {
             field: 'startDate',
             headerName: 'তারিখ',
             width: 100,
             valueGetter: data =>
-                data.row.courseInfo ? data.row.courseInfo.startDate : ''
+                data.row.Course
+                    ? dayjs(parseInt(data.row.Course.startDate)).format(
+                          'DD/MM/YYYY'
+                      )
+                    : ''
         },
         {
             field: 'endDate',
             headerName: 'মেয়াদ',
             width: 100,
             valueGetter: data =>
-                data.row.courseInfo ? data.row.courseInfo.endDate : ''
+                data.row.Course
+                    ? dayjs(parseInt(data.row.Course.endDate)).format(
+                          'DD/MM/YYYY'
+                      )
+                    : ''
         },
         {
             field: 'action',
@@ -137,15 +147,6 @@ export default function Index() {
         }
     ];
 
-    useEffect(() => {
-        fetch(process.env.BASE_URL + '/employee/getAll')
-            .then(res => res.json())
-            .then(data => {
-                setRows(data.data);
-            })
-            .catch(err => console.error(err));
-    }, []);
-
     const CustomToolbar = () => {
         return (
             <GridToolbarContainer className="flex space-x-4">
@@ -160,13 +161,25 @@ export default function Index() {
         );
     };
 
+    const { loading, error, data } = useQuery(ALL_USER_QUERY);
+
+    if (loading || error) {
+        return (
+            <>
+                <div className="w-full flex justify-center text-center font-bold text-lg p-4 text-slate-800">
+                    Loading Data...
+                </div>
+            </>
+        );
+    }
+
     return (
         <div>
             <Box sx={{ width: '100%' }}>
                 <DataGrid
-                    rows={rows}
+                    rows={data.getAllUser}
                     columns={columns}
-                    pageSize={100}
+                    pageSize={25}
                     getRowId={row => row.id}
                     rowsPerPageOptions={[25, 50, 100]}
                     checkboxSelection

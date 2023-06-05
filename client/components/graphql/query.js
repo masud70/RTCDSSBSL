@@ -72,5 +72,31 @@ module.exports = {
                 }
             }
         }
+    `,
+
+    ALL_USER_QUERY: gql`
+        query GetAllUser {
+            getAllUser {
+                slNo
+                id
+                nameEn
+                nameBn
+                email
+                phone
+                designation
+                currentOffice
+                dob
+                avatar
+                currentOfficeJoinDate
+                dateOfPRL
+                role
+                Course {
+                    id
+                    courseName
+                    startDate
+                    endDate
+                }
+            }
+        }
     `
 };

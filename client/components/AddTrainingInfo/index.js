@@ -12,11 +12,13 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { useDispatch, useSelector } from 'react-redux';
 import swal from 'sweetalert';
 import { updateCourseInfoModalToggle } from '../../redux/state/common/commonSlice';
+import dayjs from 'dayjs';
 
 export default function index() {
     const openModal = useSelector(
         state => state.common.isUpdateCourseInfoModalOpen
     );
+
     const data = useSelector(state => state.common.updateCourseInfoData);
     const auth = useSelector(state => state.auth);
     const dispatch = useDispatch();
@@ -62,12 +64,13 @@ export default function index() {
     };
 
     useEffect(() => {
-        if (data.courseInfo) {
-            setFormData(data.courseInfo);
+        console.log(data);
+        if (data.Course) {
+            setFormData(data.Course);
         } else {
             setFormData({});
         }
-        setFormData(pre => ({ ...pre, userId: data._id }));
+        setFormData(pre => ({ ...pre, userId: data.id }));
     }, [data]);
 
     return (
@@ -108,11 +111,12 @@ export default function index() {
                                     className="w-full"
                                     id="startDate"
                                     label="তারিখ"
-                                    value={formData.startDate}
+                                    value={parseInt(formData.startDate)}
                                     onChange={val => {
+                                        console.log(dayjs(val).unix());
                                         setFormData(pre => ({
                                             ...pre,
-                                            startDate: val.format('MM/DD/YYYY')
+                                            startDate: dayjs(val).unix() * 1000
                                         }));
                                     }}
                                     renderInput={params => (
@@ -125,11 +129,11 @@ export default function index() {
                                     className="w-full"
                                     id="endDate"
                                     label="মেয়াদ"
-                                    value={formData.endDate}
+                                    value={parseInt(formData.endDate)}
                                     onChange={val => {
                                         setFormData(pre => ({
                                             ...pre,
-                                            endDate: val.format('MM/DD/YYYY')
+                                            endDate: dayjs(val).unix() * 1000
                                         }));
                                     }}
                                     renderInput={params => (

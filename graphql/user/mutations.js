@@ -1,5 +1,5 @@
 const { GraphQLString } = require("graphql");
-const { UserType } = require("./typeDef");
+const { UserType, CourseType } = require("./typeDef");
 const bcrypt = require("bcrypt");
 const db = require("../../models");
 
@@ -22,6 +22,27 @@ module.exports = {
             args.password = bcrypt.hashSync("User@123", 10);
             const user = await db.User.create(args);
             return user;
+        },
+    },
+
+    insertCourse: {
+        type: CourseType,
+        args: {
+            UserId: { type: GraphQLString },
+            courseName: { type: GraphQLString },
+            startDate: { type: GraphQLString },
+            endDate: { type: GraphQLString },
+        },
+        resolve: async (parent, args, ctx, info) => {
+            const course = await db.Course.create({
+                courseName: args.courseName,
+                startDate: args.startDate,
+                endDate: args.endDate,
+                UserId: args.UserId,
+            });
+
+            console.log(course);
+            return course;
         },
     },
 };
