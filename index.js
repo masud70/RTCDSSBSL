@@ -35,6 +35,7 @@ const userMutations = require("./graphql/user/mutations");
 const postMutations = require("./graphql/post/mutations");
 const userQuery = require("./graphql/user/query");
 const postQuery = require("./graphql/post/query");
+const smsQuery = require("./graphql/sms/query");
 const { graphqlHTTP } = require("express-graphql");
 
 io.on("connection", (socket) => {
@@ -56,7 +57,7 @@ app.use((req, res, next) => {
 // QraphQL
 const Query = new GraphQLObjectType({
     name: "Query",
-    fields: { ...userQuery, ...postQuery },
+    fields: { ...userQuery, ...postQuery, ...smsQuery },
 });
 const Mutation = new GraphQLObjectType({
     name: "Mutation",

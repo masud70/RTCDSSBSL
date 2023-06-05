@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
@@ -23,6 +23,10 @@ import {
     GridToolbarDensitySelector
 } from '@mui/x-data-grid';
 import swal from 'sweetalert';
+import { useQuery } from '@apollo/client';
+import { ALL_USER_QUERY } from '../../components/graphql/query';
+import dayjs from 'dayjs';
+import Link from 'next/link';
 
 export default function Index() {
     const dispatch = useDispatch();
@@ -31,7 +35,7 @@ export default function Index() {
 
     const columns = [
         {
-            field: 'id',
+            field: 'slNo',
             headerName: 'Sl No',
             width: 60
         },
@@ -71,17 +75,20 @@ export default function Index() {
         {
             field: 'currentOfficeJoinDate',
             headerName: 'বর্তমান অফিস যোগদানের তারিখ',
-            width: 140
+            width: 140,
+            valueGetter: x => dayjs.unix(x.value).format('DD/MM/YYYY')
         },
         {
             field: 'dateOfPRL',
             headerName: 'পিআরএল গমনের তারিখ',
-            width: 140
+            width: 140,
+            valueGetter: x => dayjs.unix(x.value).format('DD/MM/YYYY')
         },
         {
             field: 'dob',
             headerName: 'জন্ম তারিখ',
-            width: 110
+            width: 110,
+            valueGetter: x => dayjs.unix(x.value).format('DD/MM/YYYY')
         },
         {
             field: 'action',
@@ -157,14 +164,17 @@ export default function Index() {
         });
     };
 
-    useEffect(() => {
-        fetch(process.env.BASE_URL + '/employee/getAll')
-            .then(res => res.json())
-            .then(data => {
-                setRows(data.data);
-            })
-            .catch(err => console.error(err));
-    }, []);
+    const { loading, error, data } = useQuery(ALL_USER_QUERY);
+
+    if (loading || error) {
+        return (
+            <>
+                <div className="w-full flex justify-center text-center font-bold text-lg p-4 text-slate-800">
+                    Loading Data...
+                </div>
+            </>
+        );
+    }
 
     socket.off('registered').on('registered', x => {
         setRows(pre => [...pre, x]);
@@ -185,24 +195,25 @@ export default function Index() {
                     printOptions={{ disableToolbarButton: true }}
                 />
                 <Button
-                    onClick={() => dispatch(addEmployeeModalToggle())}
                     className="bg-slate-600"
                     variant="contained"
                     endIcon={<AddCircleIcon />}>
-                    <span className="font-bold">Add Employee</span>
+                    <Link className="font-bold" href="/trainee-management/addEmployee">
+                        Add Employee
+                    </Link>
                 </Button>
             </GridToolbarContainer>
         );
     };
 
     return (
-        <div className="bg-gray-700 min-h-screen px-2 py-1">
-            <div className="bg-gray-100 rounded">
+        <div className="bg-gray-700 min-h-screen py-1">
+            <div className="w-full bg-gray-100 rounded">
                 <Box sx={{ height: 500, width: '100%' }}>
                     <DataGrid
-                        rows={rows}
+                        rows={data.getAllUser}
                         columns={columns}
-                        pageSize={100}
+                        pageSize={25}
                         getRowId={row => row.id}
                         rowsPerPageOptions={[25, 50, 100]}
                         checkboxSelection

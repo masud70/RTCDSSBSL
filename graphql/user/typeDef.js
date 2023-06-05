@@ -23,6 +23,8 @@ module.exports = {
             dateOfPRL: { type: GraphQLString },
             role: { type: GraphQLString },
             Course: { type: module.exports.CourseType },
+            status: { type: GraphQLBoolean },
+            message: { type: GraphQLString },
         }),
     }),
 
@@ -44,6 +46,8 @@ module.exports = {
             courseName: { type: GraphQLString },
             startDate: { type: GraphQLString },
             endDate: { type: GraphQLString },
+            status: { type: GraphQLString },
+            message: { type: GraphQLString },
         }),
     }),
 };

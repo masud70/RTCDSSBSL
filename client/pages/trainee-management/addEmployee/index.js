@@ -1,62 +1,43 @@
 import React, { useState } from 'react';
 import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
 import TextField from '@mui/material/TextField';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { useDispatch, useSelector } from 'react-redux';
-import { addEmployeeModalToggle } from '../../../redux/state/common/commonSlice';
-import { BallTriangle } from 'react-loader-spinner';
+import { ADD_EMPLOYEE_MUTATION } from '../../../components/graphql/query';
+import styles from '../../../styles/styles.module.scss';
 import dayjs from 'dayjs';
 import swal from 'sweetalert';
 import { getCookie } from 'cookies-next';
+import { useMutation } from '@apollo/client';
+import { useRouter } from 'next/router';
 
 export default function AddEmployee() {
-    const [loader, setLoader] = useState(false);
-    const [phoneError, setPhoneError] = useState(false);
+    const [phoneError, setPhoneError] = useState(0);
     const [mailOtp, setMailOtp] = useState(0);
-    const openModal = useSelector(state => state.common.isAddEmployeeModalOpen);
-    const dispatch = useDispatch();
+    const router = useRouter();
     const [formData, setFormData] = useState({
+        nameBn: '',
+        nameEn: '',
+        email: '',
+        phone: '',
+        designation: '',
+        currentOffice: '',
         dob: dayjs().unix().toString(),
         currentOfficeJoinDate: dayjs().unix().toString(),
-        dateOfPRL: dayjs().unix().toString()
+        dateOfPRL: dayjs().unix().toString(),
+        token: getCookie(process.env.ACCESS_TOKEN)
     });
 
-    const handleClose = () => {
-        dispatch(addEmployeeModalToggle());
-    };
+    const [submitForm, { loading, error, data }] = useMutation(
+        ADD_EMPLOYEE_MUTATION
+    );
 
-    const submitForm = () => {
-        setLoader(true);
-        fetch(process.env.BASE_URL + '/employee/register', {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-                authorization: 'Bearer ' + getCookie(process.env.ACCESS_TOKEN)
-            },
-            body: JSON.stringify(formData)
-        })
-            .then(r => r.json())
-            .then(res => {
-                if (res.status) {
-                    swal(res.message, { icon: 'success' });
-                } else {
-                    swal(res.message, { icon: 'error' });
-                }
-            })
-            .catch(err => {
-                swal(err.message, { icon: 'error' });
-            })
-            .finally(() => {
-                setLoader(false);
-            });
+    const handleSubmission = () => {
+        console.log(formData);
+        if (mailOtp === -1 && phoneError === -1) {
+            submitForm({ variables: formData });
+        }
     };
 
     const checkPhone = phone => {
@@ -66,13 +47,15 @@ export default function AddEmployee() {
                     return response.json();
                 })
                 .then(data => {
-                    setPhoneError(data.status);
+                    if (data.status) setPhoneError(1);
+                    else setPhoneError(-1);
                 })
                 .catch(error => {
                     swal(error.message, { icon: 'error' });
+                    setPhoneError(0);
                 });
         } else {
-            setPhoneError(false);
+            setPhoneError(0);
         }
     };
 
@@ -110,9 +93,219 @@ export default function AddEmployee() {
             });
     };
 
+    if (!loading && data) {
+        swal({
+            title: 'Success',
+            text:
+                data.createUser.message +
+                '\nPlease wait a few seconds to be redirected.',
+            icon: 'success'
+        });
+        setTimeout(() => {
+            router.push('/trainee-management');
+        }, 2000);
+    } else if (error) {
+        swal({ title: 'Error', text: error.createUser.message, icon: 'error' });
+    }
+
     return (
         <>
-            {!loader && (
+            <div className="w-full flex flex-col justify-center">
+                <div className="w-full p-2 font-bold text-3xl text-center text-gray-700">
+                    Add New Employee
+                </div>
+                <div className="w-full flex flex-col justify-center items-center">
+                    <div className="w-5/6 bg-slate-400 p-4 md:w-1/2 my-1 flex flex-col items-center space-y-2 rounded">
+                        <TextField
+                            className="w-full bg-white rounded"
+                            label="নাম (বাংলা)"
+                            id="nameBn"
+                            onChange={e => {
+                                const { id, value } = e.target;
+                                setFormData(pre => ({
+                                    ...pre,
+                                    [id]: value
+                                }));
+                            }}
+                        />
+                        <TextField
+                            className="w-full bg-white rounded"
+                            id="nameEn"
+                            label="নাম (ইংরেজী)"
+                            onChange={e => {
+                                const { id, value } = e.target;
+                                setFormData(pre => ({
+                                    ...pre,
+                                    [id]: value
+                                }));
+                            }}
+                        />
+                        <div className="w-full flex space-x-2">
+                            <TextField
+                                className="w-5/6 bg-white rounded"
+                                id="email"
+                                label="ই-মেইল"
+                                onChange={e => {
+                                    const { id, value } = e.target;
+                                    setFormData(pre => ({
+                                        ...pre,
+                                        [id]: value
+                                    }));
+                                }}
+                            />
+                            <Button
+                                className="w-1/6 bg-white"
+                                onClick={() => {
+                                    if (mailOtp == 0) sendOtp(formData.email);
+                                }}>
+                                {mailOtp == 0
+                                    ? 'Send OTP'
+                                    : mailOtp > 0
+                                    ? 'Resend OTP'
+                                    : 'Email verified'}
+                            </Button>
+                        </div>
+
+                        <div
+                            className={`text-red-400 w-full text-xs ${
+                                mailOtp < 1 && 'hidden'
+                            }`}>
+                            <TextField
+                                className="w-full bg-white rounded"
+                                label="OTP"
+                                id="otp"
+                                onChange={e => {
+                                    const otp = e.target.value;
+                                    if (otp.length == 6)
+                                        verifyOtp(formData.email, otp);
+                                }}
+                            />
+                            <div
+                                className={`text-red-400 text-xs ${
+                                    mailOtp < 2 && 'hidden'
+                                }`}>
+                                Incorrect OTP.
+                            </div>
+                        </div>
+                        <TextField
+                            className="w-full bg-white rounded"
+                            id="phone"
+                            label="মোবাইল নম্বর"
+                            value={formData.phone}
+                            onChange={e => {
+                                let { id, value } = e.target;
+                                value = value.replace(/\D/g, '');
+                                checkPhone(value);
+                                setFormData(pre => ({
+                                    ...pre,
+                                    [id]: value
+                                }));
+                            }}
+                        />
+                        <div
+                            className={`text-red-400 text-xs w-full ${
+                                phoneError <= 0 && 'hidden'
+                            }`}>
+                            This phone number is already in use.
+                        </div>
+                        <TextField
+                            className="w-full bg-white rounded"
+                            id="designation"
+                            label="পদবী"
+                            onChange={e => {
+                                const { id, value } = e.target;
+                                setFormData(pre => ({
+                                    ...pre,
+                                    [id]: value
+                                }));
+                            }}
+                        />
+                        <TextField
+                            className="w-full bg-white rounded"
+                            id="currentOffice"
+                            label="Current Office"
+                            onChange={e => {
+                                const { id, value } = e.target;
+                                setFormData(pre => ({
+                                    ...pre,
+                                    [id]: value
+                                }));
+                            }}
+                        />
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            <DatePicker
+                                className="w-full bg-white rounded"
+                                id="dob"
+                                label="Date of Birth"
+                                value={dayjs
+                                    .unix(parseInt(formData.dob))
+                                    .format('MM/DD/YYYY')}
+                                onChange={val => {
+                                    setFormData(pre => ({
+                                        ...pre,
+                                        dob: val.unix().toString()
+                                    }));
+                                }}
+                                renderInput={params => (
+                                    <TextField {...params} />
+                                )}
+                            />
+                        </LocalizationProvider>
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            <DatePicker
+                                className="w-full bg-white rounded"
+                                id="currentOfficeJoinDate"
+                                label="Current Office Join Date"
+                                value={dayjs
+                                    .unix(
+                                        parseInt(formData.currentOfficeJoinDate)
+                                    )
+                                    .format('MM/DD/YYYY')}
+                                onChange={val => {
+                                    setFormData(pre => ({
+                                        ...pre,
+                                        currentOfficeJoinDate: val
+                                            .unix()
+                                            .toString()
+                                    }));
+                                }}
+                                renderInput={params => (
+                                    <TextField {...params} />
+                                )}
+                            />
+                        </LocalizationProvider>
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            <DatePicker
+                                className="w-full bg-white rounded"
+                                id="dateOfPRL"
+                                label="PRL Date"
+                                value={dayjs
+                                    .unix(parseInt(formData.dateOfPRL))
+                                    .format('MM/DD/YYYY')}
+                                onChange={val => {
+                                    setFormData(pre => ({
+                                        ...pre,
+                                        dateOfPRL: val.unix().toString()
+                                    }));
+                                }}
+                                renderInput={params => (
+                                    <TextField {...params} />
+                                )}
+                            />
+                        </LocalizationProvider>
+                        <input
+                            type="button"
+                            value="SUBMIT"
+                            className={[
+                                'py-1 px-3 text-lg rounded',
+                                styles.login_button
+                            ].join(' ')}
+                            onClick={handleSubmission}
+                        />
+                    </div>
+                </div>
+            </div>
+            {/* {!loader && (
                 <Dialog
                     open={openModal}
                     onClose={handleClose}
@@ -319,7 +512,7 @@ export default function AddEmployee() {
                         <Button onClick={() => submitForm()}>Add Now</Button>
                     </DialogActions>
                 </Dialog>
-            )}
+            )} */}
             {/* <div className="absolute bg-slate-700 top-0 left-0 h-screen w-screen justify-center items-center flex">
                 <BallTriangle
                     height={120}

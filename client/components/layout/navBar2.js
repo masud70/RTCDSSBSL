@@ -39,7 +39,7 @@ export default function Navbar2() {
         {
             name: 'Trainee Management',
             href: '/trainee-management',
-            current: router.pathname === '/trainee-management'
+            current: router.pathname.includes('trainee-management')
         },
         {
             name: 'Sms History',

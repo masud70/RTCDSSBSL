@@ -81,4 +81,27 @@ module.exports = {
             return ret;
         },
     },
+
+    getCourseById: {
+        type: CourseType,
+        args: {
+            UserId: { type: GraphQLString },
+        },
+        resolve: async (parent, args, ctx, info) => {
+            const course = await db.Course.findOne({
+                where: { UserId: args.UserId },
+            });
+            if (course)
+                return {
+                    status: true,
+                    message: "Course found",
+                    ...course.dataValues,
+                };
+            else
+                return {
+                    status: false,
+                    message: "Course not found.",
+                };
+        },
+    },
 };

@@ -7,7 +7,6 @@ module.exports = {
     createUser: {
         type: UserType,
         args: {
-            id: { type: GraphQLString },
             nameBn: { type: GraphQLString },
             nameEn: { type: GraphQLString },
             email: { type: GraphQLString },
@@ -17,15 +16,36 @@ module.exports = {
             dob: { type: GraphQLString },
             currentOfficeJoinDate: { type: GraphQLString },
             dateOfPRL: { type: GraphQLString },
+            token: { type: GraphQLString },
         },
         resolve: async (parent, args, context, info) => {
-            args.password = bcrypt.hashSync("User@123", 10);
-            const user = await db.User.create(args);
-            return user;
+            try {
+                args.password = bcrypt.hashSync("User@123", 10);
+                const user = await db.User.create({
+                    ...args,
+                    avatar: "http://localhost:5000/uploads/images/profile.png",
+                });
+                if (user)
+                    return {
+                        status: true,
+                        message: "Employee added successfully!",
+                        ...user.dataValues,
+                    };
+                else
+                    return {
+                        status: false,
+                        message: "User cannot be created.",
+                    };
+            } catch (error) {
+                return {
+                    status: false,
+                    message: error.message,
+                };
+            }
         },
     },
 
-    insertCourse: {
+    insertOrUpdateCourse: {
         type: CourseType,
         args: {
             UserId: { type: GraphQLString },
@@ -34,15 +54,50 @@ module.exports = {
             endDate: { type: GraphQLString },
         },
         resolve: async (parent, args, ctx, info) => {
-            const course = await db.Course.create({
-                courseName: args.courseName,
-                startDate: args.startDate,
-                endDate: args.endDate,
-                UserId: args.UserId,
-            });
+            try {
+                const user = await db.User.findOne({
+                    where: { id: args.UserId },
+                    include: ["Course"],
+                });
 
-            console.log(course);
-            return course;
+                if (user && user.Course) {
+                    const courseUpdated = await db.Course.update(
+                        {
+                            courseName: args.courseName,
+                            startDate: args.startDate,
+                            endDate: args.endDate,
+                        },
+                        {
+                            where: { id: user.Course.id },
+                            returning: true,
+                            plain: true,
+                        }
+                    );
+                    console.log(courseUpdated);
+                    return {
+                        status: true,
+                        message: "Course updated successfully!",
+                    };
+                } else if (user) {
+                    const courseNew = await db.Course.create({
+                        courseName: args.courseName,
+                        startDate: args.startDate,
+                        endDate: args.endDate,
+                        UserId: args.UserId,
+                    });
+                    console.log(courseNew);
+                    return {
+                        status: true,
+                        message: "Course added successfully!",
+                        ...courseNew,
+                    };
+                }
+            } catch (error) {
+                return {
+                    status: false,
+                    message: error.message,
+                };
+            }
         },
     },
 };

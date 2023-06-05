@@ -4,7 +4,7 @@ const db = require("../../models");
 const { PostType } = require("./typeDef");
 
 module.exports = {
-    createUser: {
+    createPost: {
         type: PostType,
         args: {
             body: { type: GraphQLString },

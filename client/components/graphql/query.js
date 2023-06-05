@@ -135,5 +135,39 @@ module.exports = {
                 endDate
             }
         }
+    `,
+
+    ADD_EMPLOYEE_MUTATION: gql`
+        mutation AddEmployee(
+            $nameBn: String!
+            $nameEn: String!
+            $email: String!
+            $phone: String!
+            $designation: String!
+            $currentOffice: String!
+            $dob: String!
+            $currentOfficeJoinDate: String!
+            $dateOfPRL: String!
+            $token: String!
+        ) {
+            createUser(
+                nameBn: $nameBn
+                nameEn: $nameEn
+                email: $email
+                phone: $phone
+                designation: $designation
+                currentOffice: $currentOffice
+                dob: $dob
+                currentOfficeJoinDate: $currentOfficeJoinDate
+                dateOfPRL: $dateOfPRL
+                token: $token
+            ) {
+                status
+                message
+                id
+                nameEn
+                phone
+            }
+        }
     `
 };
