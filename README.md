@@ -17,6 +17,7 @@ With the employee data printing feature, administrators can generate printable r
 
 ### Real-time Office Updates and Communication
 The system includes a dedicated timeline section where authorized users, such as administrators or managers, can post office updates, news, or announcements. Employees can view these updates in real-time and engage with the content by reacting and leaving comments, promoting transparent communication and fostering a sense of community within the organization.
+
 ## Installation and Setup
 
 To run the Employee Management System locally, follow these steps:
@@ -41,7 +42,8 @@ To run the Employee Management System locally, follow these steps:
 
 + Start the application:
     Access the system by opening a web browser and navigating to `http://localhost:3000`.
-    ## Project Features
+
+## Project Features
 
     1. Application of `TensorFlow Lite` for real-time prediction. (Login by face matching in this case)
     2. Application of `GraphQL` (most of the api endpoint is created using GaphQL).
@@ -78,17 +80,63 @@ To run the Employee Management System locally, follow these steps:
 
 ## Screenshots
 
+ER Diagram of the project:
+![App Screenshot](https://github.com/masud70/RTCDSSBSL/blob/main/public/uploads/images/erd.png?raw=true)
+
+App screenshots
 ![App Screenshot](https://github.com/masud70/RTCDSSBSL/blob/main/public/uploads/images/screenshot-1.png?raw=true)
 ![App Screenshot](https://github.com/masud70/RTCDSSBSL/blob/main/public/uploads/images/screenshot-2.png?raw=true)
 ![App Screenshot](https://github.com/masud70/RTCDSSBSL/blob/main/public/uploads/images/screenshot-3.png?raw=true)
-ER Diagram of the project
-![App Screenshot](https://github.com/masud70/RTCDSSBSL/blob/main/public/uploads/images/erd.png?raw=true)
 
 ## Acknowledgments
 
-- Thanks to Professor ***[Dr. Iqbal Ahmed](https://cu.ac.bd/public_profile/index.php?ein=4635)*** for conducting the `Web Engineering` course.
-- Thanks to Professor ***[Dr. Abu Nowshed Chy](https://cu.ac.bd/public_profile/index.php?ein=5905)*** for providing guidance and support throughout the laboratory course.
-- This project utilizes several library for functionalities. These are tabulated below.
+I would like to express my sincere gratitude to the following individuals for their invaluable contributions and support throughout the development of this project:
+
+- Professor ***[Dr. Iqbal Ahmed](https://cu.ac.bd/public_profile/index.php?ein=4635)***: I am grateful to Professor **Dr. Iqbal Ahmed** for conducting the Web Engineering course and providing the necessary knowledge and guidance that laid the foundation for this project.
+
+- Professor ***[Dr. Abu Nowshed Chy](https://cu.ac.bd/public_profile/index.php?ein=5905)***: I would like to extend my appreciation to Professor **Dr. Abu Nowshed Chy** for his guidance and continuous support during the laboratory course associated with this project.
+
+- I would also like to acknowledge the following libraries that were instrumental in implementing various functionalities within this project:
+
+
+    | Library            | Description                                                                                    |
+    |--------------------|------------------------------------------------------------------------------------------------|
+    | Tensorflow-Js      | Library for implementing machine learning models and computations in JavaScript.                |
+    | Apollo Client      | A fully-featured GraphQL client for making requests to a GraphQL server and managing local state.|
+    | Sequelize          | An Object-Relational Mapping (ORM) library for Node.js that simplifies database interactions.   |
+    | Nodemailer         | A module for sending emails using Node.js, providing a simple and efficient solution for email sending tasks.|
+    | mui                | Material-UI is a popular React UI framework that provides pre-built components following the Material Design guidelines.|
+    | axios              | A promise-based HTTP client for making API requests from the browser or Node.js.                |
+    | cookies-next       | A library for working with cookies in Next.js applications.                                     |
+    | dayjs              | A lightweight JavaScript library for parsing, validating, manipulating, and formatting dates.   |
+    | face-api.js        | JavaScript API for face detection and recognition in the browser using TensorFlow.js.            |
+    | graphql            | A query language and runtime for executing and defining APIs in a type-safe manner.              |
+    | gsap               | GreenSock Animation Platform for creating high-performance, complex animations in JavaScript.  |
+    | moment             | A JavaScript date library for parsing, validating, manipulating, and formatting dates.          |
+    | redux              | A predictable state container for managing the state of JavaScript applications.               |
+    | socket.io          | A library that enables real-time, bidirectional communication between clients and servers.      |
+    | sweetalert         | A beautiful and customizable replacement for JavaScript's native alert and confirmation dialogs.|
+    | scss               | A CSS preprocessor that extends the capabilities of CSS with variables, mixins, and more.      |
+    | tailwindcss        | A utility-first CSS framework for rapidly building custom user interfaces.                      |
+    | bcrypt             | A library for hashing passwords and comparing hashed passwords in Node.js.                      |
+    | body-parser        | Node.js middleware for parsing JSON, URL-encoded, and multipart/form-data request bodies.       |
+    | cookie-parser      | A middleware for parsing cookies in Express.js applications.                                    |
+    | cors               | A package that provides Cross-Origin Resource Sharing (CORS) support for Express.js applications.|
+    | dotenv             | A module that loads environment variables from a .env file into process.env.                     |
+    | express            | A web application framework for Node.js that simplifies the development of server-side applications.|
+    | express-graphql    | A package that integrates GraphQL with Express.js for creating GraphQL APIs.                    |
+    | express-validator | A set of express.js middleware for validating request data.                                      |
+    | jsonwebtoken      | A library for generating and verifying JSON Web Tokens (JWT) in Node.js.                        |
+    | multer             | A middleware for handling multipart/form-data requests, primarily used for file uploads.        |
+    | mysql2             | A MySQL driver for Node.js that provides fast and efficient access to MySQL databases.           |
+    | path               | A module that provides utilities for working with file and directory paths in Node.js.           |
+    | nodemon            | A utility for automatically restarting the Node.js application when file changes are detected.  |
+
+
+
+I express my sincere appreciation to the developers and contributors of these libraries for their hard work and dedication in creating and maintaining these valuable resources.
+
+Without the support and contributions of these individuals and libraries, the successful completion of this project would not have been possible. Thank you all for your significant contributions.
 
 ## Author
 
