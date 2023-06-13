@@ -13,6 +13,7 @@ import * as faceapi from 'face-api.js';
 import { useLazyQuery } from '@apollo/client';
 import { FACELOGIN_QUERY } from '../../components/graphql/query';
 
+
 const index = () => {
     const [load, setLoad] = useState(false);
     const [phone, setPhone] = useState('');
@@ -26,7 +27,6 @@ const index = () => {
     const canvasRef = useRef();
     const useTiny = true;
     const minConfidence = 0.6;
-
     let logoItem = useRef(null);
     let textItem = useRef(null);
 
@@ -184,7 +184,8 @@ const index = () => {
 
     useEffect(() => {
         if (
-            result && result.distance >= 0.4 &&
+            result &&
+            result.distance >= 0.4 &&
             !loading &&
             result.label === 'User'
         ) {
@@ -281,7 +282,20 @@ const index = () => {
                                                 ref={videoRef}
                                                 onPlay={detect}
                                             />
-                                            <canvas ref={canvasRef} />
+                                            <canvas
+                                                ref={canvasRef}
+                                                style={{
+                                                    position: 'absolute',
+                                                    marginLeft: 'auto',
+                                                    marginRight: 'auto',
+                                                    left: 0,
+                                                    right: 0,
+                                                    textAlign: 'center',
+                                                    zindex: 100,
+                                                    width: 640,
+                                                    height: 480
+                                                }}
+                                            />
                                         </div>
                                     </div>
                                     <div className="text-xl text-center font-bold">

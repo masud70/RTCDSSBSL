@@ -1,9 +1,7 @@
 import React, { useEffect } from 'react';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import { Carousel } from 'react-responsive-carousel';
-import Posts from '../components/Posts';
 import Marquee from 'react-fast-marquee';
-import LoadingButton from '@mui/lab/LoadingButton';
 import { useDispatch, useSelector } from 'react-redux';
 import { setUserData } from '../redux/state/auth/authSlice';
 
