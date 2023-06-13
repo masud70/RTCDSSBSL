@@ -81,6 +81,8 @@ To run the Employee Management System locally, follow these steps:
 ![App Screenshot](https://github.com/masud70/RTCDSSBSL/blob/main/public/uploads/images/screenshot-1.png?raw=true)
 ![App Screenshot](https://github.com/masud70/RTCDSSBSL/blob/main/public/uploads/images/screenshot-2.png?raw=true)
 ![App Screenshot](https://github.com/masud70/RTCDSSBSL/blob/main/public/uploads/images/screenshot-3.png?raw=true)
+ER Diagram of the project
+![App Screenshot](https://github.com/masud70/RTCDSSBSL/blob/main/public/uploads/images/erd.png?raw=true)
 
 ## Acknowledgments
 
