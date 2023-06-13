@@ -160,9 +160,12 @@ const index = () => {
                                         onPasswordChange(e.target.value)
                                     }
                                 />
-                                <div className="w-full flex flex-row justify-between">
+                                <div className="w-full flex flex-row justify-between rounded overflow-hidden">
                                     <Link
-                                        className={styles.faceLoginBtn}
+                                        className={
+                                            styles.faceLoginBtn +
+                                            ' w-1/2'
+                                        }
                                         href={'/login/faceLogin'}>
                                         Face Login
                                     </Link>
@@ -172,7 +175,9 @@ const index = () => {
                                         loading={loading}
                                         loadingPosition="end"
                                         variant="contained"
-                                        className={styles.login_button}>
+                                        className={
+                                            styles.login_button + ' w-1/2 rounded-l-none'
+                                        }>
                                         LOGIN
                                     </LoadingButton>
                                 </div>

@@ -11,7 +11,6 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { useDispatch, useSelector } from 'react-redux';
 import { addEmployeeModalToggle } from '../../../redux/state/common/commonSlice';
-import { BallTriangle } from 'react-loader-spinner';
 import dayjs from 'dayjs';
 import swal from 'sweetalert';
 import { getCookie } from 'cookies-next';

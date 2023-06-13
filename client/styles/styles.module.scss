@@ -17,15 +17,15 @@ $hover_color: #4d76bc;
 .login_button {
     background-color: $button_color_primary;
     cursor: pointer;
-    color: white;
+    color: $white;
 }
 
 .faceLoginBtn {
     background-color: $button_color_primary;
     color: $white;
     font-size: $font_size_medium;
-    border-radius: 4px;
     padding: 4px 8px;
+    text-align: center;
     :hover {
         background-color: $hover_color;
     }

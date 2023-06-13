@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Box from '@mui/material/Box';
 import { useDispatch } from 'react-redux';
 import IconButton from '@mui/material/IconButton';
@@ -19,6 +19,7 @@ import { ALL_USER_QUERY } from '../../components/graphql/query';
 import dayjs from 'dayjs';
 
 export default function Index() {
+    const [pageSize, setPageSize] = useState(10);
     const dispatch = useDispatch();
 
     const columns = [
@@ -161,7 +162,7 @@ export default function Index() {
         );
     };
 
-    const { loading, error, data } = useQuery(ALL_USER_QUERY);
+    const { loading, error, data, refetch } = useQuery(ALL_USER_QUERY);
 
     if (loading || error) {
         return (
@@ -179,9 +180,10 @@ export default function Index() {
                 <DataGrid
                     rows={data.getAllUser}
                     columns={columns}
-                    pageSize={25}
+                    pageSize={pageSize}
                     getRowId={row => row.id}
-                    rowsPerPageOptions={[25, 50, 100]}
+                    rowsPerPageOptions={[10, 20, 50]}
+                    onPageSizeChange={setPageSize}
                     checkboxSelection
                     autoHeight
                     disableSelectionOnClick

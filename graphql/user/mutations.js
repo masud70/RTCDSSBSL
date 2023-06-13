@@ -1,5 +1,6 @@
 const { GraphQLString } = require("graphql");
 const { UserType, CourseType } = require("./typeDef");
+const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const db = require("../../models");
 
@@ -97,6 +98,83 @@ module.exports = {
                     status: false,
                     message: error.message,
                 };
+            }
+        },
+    },
+
+    updateUser: {
+        type: UserType,
+        args: {
+            nameBn: { type: GraphQLString },
+            nameEn: { type: GraphQLString },
+            email: { type: GraphQLString },
+            phone: { type: GraphQLString },
+            designation: { type: GraphQLString },
+            currentOffice: { type: GraphQLString },
+            dob: { type: GraphQLString },
+            currentOfficeJoinDate: { type: GraphQLString },
+            dateOfPRL: { type: GraphQLString },
+            id: { type: GraphQLString },
+            token: { type: GraphQLString },
+        },
+        resolve: async (parent, args, ctx, info) => {
+            console.log(args);
+            try {
+                const { userId } = jwt.verify(
+                    args.token,
+                    process.env.JWT_SECRET
+                );
+                if (userId) {
+                    const update = await db.User.update(
+                        {
+                            nameBn: args.nameBn,
+                            nameEn: args.nameEn,
+                            email: args.email,
+                            phone: args.phone,
+                            designation: args.designation,
+                            currentOffice: args.currentOffice,
+                            dob: args.dob,
+                            currentOfficeJoinDate: args.currentOfficeJoinDate,
+                            dateOfPRL: args.dateOfPRL,
+                        },
+                        { where: { id: args.id } }
+                    );
+                    if (update[0]) {
+                        return {
+                            status: true,
+                            message: "User updated.",
+                        };
+                    } else {
+                        throw new Error("Update failed.");
+                    }
+                } else {
+                    throw new Error("Invalid token.");
+                }
+            } catch (error) {
+                return { status: false, message: error.message };
+            }
+        },
+    },
+
+    deleteUser: {
+        type: UserType,
+        args: {
+            id: { type: GraphQLString },
+            token: { type: GraphQLString },
+        },
+        resolve: async (parent, args, ctx, info) => {
+            try {
+                const deleted = await db.User.destroy({
+                    where: { id: args.id },
+                });
+                console.log(deleted);
+
+                return {
+                    status: true,
+                    message: "User deleted successfully.",
+                };
+            } catch (error) {
+                return { status: false, message: error.message };
             }
         },
     },

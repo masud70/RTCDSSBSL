@@ -146,8 +146,9 @@ function index() {
                                     </button>
                                 )}
 
-                                {parseInt(page) >
-                                    3 && <span className="text-lg">. . .</span>}
+                                {parseInt(page) > 3 && (
+                                    <span className="text-lg">. . .</span>
+                                )}
 
                                 {data &&
                                     data.getPagination.groupA.map(
@@ -262,7 +263,7 @@ function index() {
                         </div>
                         <div>
                             <iframe
-                                src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d118103.45687625333!2d91.81986775!3d22.32593435!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sbd!4v1673414719236!5m2!1sen!2sbd"
+                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d58894.13483781397!2d90.35380430000001!3d22.695383099999997!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x37553407fbece487%3A0x5d069b9599d4414a!2sBarishal!5e0!3m2!1sen!2sbd!4v1686644632556!5m2!1sen!2sbd"
                                 width="600"
                                 height="450"
                                 allowfullscreen={true}

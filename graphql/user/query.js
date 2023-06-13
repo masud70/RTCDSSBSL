@@ -64,6 +64,21 @@ module.exports = {
         },
     },
 
+    getUserById: {
+        type: UserType,
+        args: {
+            id: { type: GraphQLString },
+        },
+        resolve: async (parent, args, context, info) => {
+            try {
+                const user = await db.User.findOne({ where: { id: args.id } });
+                return user;
+            } catch (error) {
+                return { status: false, message: error.message };
+            }
+        },
+    },
+
     getAllUser: {
         type: new GraphQLList(UserType),
         args: {},

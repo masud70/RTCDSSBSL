@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
@@ -13,7 +13,7 @@ import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import Tooltip from '@mui/material/Tooltip';
-import EditEmployeeData from './EditEmployeeData';
+import EditEmployeeData from './editEmployee';
 import {
     DataGrid,
     GridToolbarContainer,
@@ -23,15 +23,27 @@ import {
     GridToolbarDensitySelector
 } from '@mui/x-data-grid';
 import swal from 'sweetalert';
-import { useQuery } from '@apollo/client';
-import { ALL_USER_QUERY } from '../../components/graphql/query';
+import { useMutation, useQuery } from '@apollo/client';
+import {
+    ALL_USER_QUERY,
+    DELETE_USER_MUTATION
+} from '../../components/graphql/query';
 import dayjs from 'dayjs';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { getCookie } from 'cookies-next';
 
 export default function Index() {
     const dispatch = useDispatch();
     const [rows, setRows] = useState([]);
     const socket = useContext(SocketContext);
+    const [pageSize, setPageSize] = useState(10);
+    const router = useRouter();
+
+    const [
+        deleteUser,
+        { loading: deleteLoading, error: deleteError, data: deleteData }
+    ] = useMutation(DELETE_USER_MUTATION);
 
     const columns = [
         {
@@ -100,19 +112,18 @@ export default function Index() {
                         <div>
                             <Tooltip title="Edit" placement="top">
                                 <IconButton
-                                    onClick={() => {
-                                        dispatch(
-                                            editEmployeeModalToggle({
-                                                data: data.row
-                                            })
-                                        );
-                                    }}>
+                                    onClick={() =>
+                                        router.push(
+                                            '/trainee-management/editEmployee/' +
+                                                data.row.id
+                                        )
+                                    }>
                                     <EditIcon className="text-green-700" />
                                 </IconButton>
                             </Tooltip>
                             <Tooltip title="Delete" placement="top">
                                 <IconButton
-                                    onClick={() => deleteHandler(data.row)}>
+                                    onClick={() => deleteHandler(data.row.id)}>
                                     <DeleteIcon className="text-red-500" />
                                 </IconButton>
                             </Tooltip>
@@ -123,7 +134,7 @@ export default function Index() {
         }
     ];
 
-    const deleteHandler = user => {
+    const deleteHandler = id => {
         swal({
             text: 'Do you want to delete this employee?',
             buttons: {
@@ -132,39 +143,19 @@ export default function Index() {
             }
         }).then(data => {
             if (data === 'delete') {
-                fetch(process.env.BASE_URL + '/employee/delete', {
-                    method: 'POST',
-                    body: JSON.stringify({ id: user._id }),
-                    headers: {
-                        Accept: 'application/json',
-                        'Content-Type': 'application/json'
+                deleteUser({
+                    variables: {
+                        id: id,
+                        token: getCookie(process.env.ACCESS_TOKEN)
                     }
-                })
-                    .then(response => {
-                        return response.json();
-                    })
-                    .then(res => {
-                        if (res.status === 'success') {
-                            const newData = rows.filter(
-                                row => row._id !== user._id
-                            );
-                            setRows(newData);
-                        }
-                        swal({ text: res.message, icon: res.status });
-                    })
-                    .catch(err => {
-                        swal({
-                            text: 'There was an error. Please try again.',
-                            icon: 'error'
-                        });
-                    });
+                });
             } else {
                 return swal('Deletion cancelled.', { icon: 'success' });
             }
         });
     };
 
-    const { loading, error, data } = useQuery(ALL_USER_QUERY);
+    const { loading, error, data, refetch } = useQuery(ALL_USER_QUERY);
 
     if (loading || error) {
         return (
@@ -198,7 +189,9 @@ export default function Index() {
                     className="bg-slate-600"
                     variant="contained"
                     endIcon={<AddCircleIcon />}>
-                    <Link className="font-bold" href="/trainee-management/addEmployee">
+                    <Link
+                        className="font-bold"
+                        href="/trainee-management/addEmployee">
                         Add Employee
                     </Link>
                 </Button>
@@ -206,22 +199,30 @@ export default function Index() {
         );
     };
 
+    if (deleteData) {
+        swal({ text: deleteData.deleteUser.message, icon: 'success' });
+        refetch();
+    }
+    if (deleteError) swal({ text: deleteError.message, icon: 'error' });
+
     return (
         <div className="bg-gray-700 min-h-screen py-1">
             <div className="w-full bg-gray-100 rounded">
-                <Box sx={{ height: 500, width: '100%' }}>
+                <Box sx={{ width: '100%' }}>
                     <DataGrid
                         rows={data.getAllUser}
                         columns={columns}
-                        pageSize={25}
+                        pageSize={pageSize}
                         getRowId={row => row.id}
-                        rowsPerPageOptions={[25, 50, 100]}
+                        rowsPerPageOptions={[10, 20, 50]}
                         checkboxSelection
+                        autoHeight
                         disableSelectionOnClick
                         experimentalFeatures={{ newEditingApi: true }}
                         components={{
                             Toolbar: CustomToolbar
                         }}
+                        onPageSizeChange={setPageSize}
                     />
                 </Box>
                 <AddEmployee />

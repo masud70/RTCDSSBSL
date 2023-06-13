@@ -16,6 +16,23 @@ module.exports = {
         }
     `,
 
+    GET_USER_DATA_BY_ID: gql`
+        query GetUserById($id: String!) {
+            getUserById(id: $id) {
+                id
+                nameBn
+                nameEn
+                email
+                phone
+                dob
+                designation
+                currentOffice
+                currentOfficeJoinDate
+                dateOfPRL
+            }
+        }
+    `,
+
     GET_POST_BY_PAGE: gql`
         query getPostData($page: Int!) {
             getPosts(page: $page) {
@@ -167,6 +184,48 @@ module.exports = {
                 id
                 nameEn
                 phone
+            }
+        }
+    `,
+
+    UPDATE_USER_MUTATION: gql`
+        mutation UpdateUser(
+            $nameBn: String!
+            $nameEn: String!
+            $email: String!
+            $phone: String!
+            $designation: String!
+            $currentOffice: String!
+            $dob: String!
+            $currentOfficeJoinDate: String!
+            $dateOfPRL: String!
+            $id: String!
+            $token: String!
+        ) {
+            updateUser(
+                nameBn: $nameBn
+                nameEn: $nameEn
+                email: $email
+                phone: $phone
+                designation: $designation
+                currentOffice: $currentOffice
+                dob: $dob
+                currentOfficeJoinDate: $currentOfficeJoinDate
+                dateOfPRL: $dateOfPRL
+                id: $id
+                token: $token
+            ) {
+                status
+                message
+            }
+        }
+    `,
+
+    DELETE_USER_MUTATION: gql`
+        mutation DeleteUser($id: String!, $token: String!) {
+            deleteUser(id: $id, token: $token) {
+                status
+                message
             }
         }
     `
