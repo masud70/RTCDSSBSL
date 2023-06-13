@@ -1,7 +1,7 @@
 # Employee Management System (RTCDSSBSL)
 **The Employee Management System** is a web-based application designed to efficiently maintain an employee database and streamline various administrative tasks. This system provides a comprehensive set of features to manage employee information, training notifications, and facilitate effective communication within the organization.
 
-![Logo](https://raw.githubusercontent.com/masud70/RTCDSSBSL/main/public/uploads/images/dss-logo.jpg?token=GHSAT0AAAAAACCIUYRIIMFGMEAMOH2PXUEGZEITMGA)
+![Logo](https://github.com/masud70/RTCDSSBSL/blob/main/public/uploads/images/dss-logo.jpg?raw=true)
 
 
 ## Key Features
@@ -78,7 +78,9 @@ To run the Employee Management System locally, follow these steps:
 
 ## Screenshots
 
-![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
+![App Screenshot](https://github.com/masud70/RTCDSSBSL/blob/main/public/uploads/images/screenshot-1.png?raw=true)
+![App Screenshot](https://github.com/masud70/RTCDSSBSL/blob/main/public/uploads/images/screenshot-2.png?raw=true)
+![App Screenshot](https://github.com/masud70/RTCDSSBSL/blob/main/public/uploads/images/screenshot-3.png?raw=true)
 
 ## Acknowledgments
 
