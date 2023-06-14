@@ -57,6 +57,10 @@ module.exports = {
                     body
                     time
                     UserId
+                    User{
+                        avatar
+                        nameEn
+                    }
                 }
             }
         }

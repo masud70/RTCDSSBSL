@@ -12,10 +12,17 @@ module.exports = {
             const posts = await db.Post.findAll({
                 offset: 5 * args.page,
                 limit: 5,
-                include: ["User", "Comments", "Reactions"],
+                include: [
+                    "User",
+                    "Reactions",
+                    {
+                        model: db.Comment,
+                        include: [db.User],
+                        order: [["createdAt", "DESC"]],
+                    },
+                ],
                 order: [["createdAt", "DESC"]],
             });
-            console.log(posts.length)
             return posts;
         },
     },
@@ -41,7 +48,7 @@ module.exports = {
             while (
                 i < totalPages &&
                 Math.abs(i - args.page) < 2 &&
-                i < totalPages-1
+                i < totalPages - 1
             ) {
                 groupB.push(++i);
             }

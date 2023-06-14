@@ -4,19 +4,35 @@
 
 ::-webkit-scrollbar {
     width: 2px;
-  }
-  
-  /* Track */
-  ::-webkit-scrollbar-track {
+}
+
+/* Track */
+::-webkit-scrollbar-track {
     background: #f1f1f1;
-  }
-  
-  /* Handle */
-  ::-webkit-scrollbar-thumb {
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
     background: #888;
-  }
-  
-  /* Handle on hover */
-  ::-webkit-scrollbar-thumb:hover {
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
     background: #555;
-  }
+}
+
+.ddown1 {
+    display: none;
+}
+
+.main1:hover .ddown1 {
+    display: block !important;
+}
+
+.ddown2 {
+  display: none;
+}
+
+.main2:hover .ddown2 {
+  display: block !important;
+}

@@ -178,17 +178,32 @@ export default function Navbar2() {
                                                             </Link>
                                                         )}
                                                     </Menu.Item>
+
                                                     <Menu.Item>
                                                         {({ active }) => (
                                                             <Link
                                                                 href="/settings"
                                                                 className={classNames(
                                                                     active
-                                                                        ? 'bg-gray-100'
+                                                                        ? 'bg-gray-100 main1'
                                                                         : '',
-                                                                    'block px-4 py-2 text-sm text-gray-700'
+                                                                    'block px-4 py-2 text-sm text-gray-700 main1'
                                                                 )}>
                                                                 Settings
+                                                                <div className="absolute right-48 ddown1 bg-white rounded rounded-tr-none min-w-[200px]">
+                                                                    <div className="w-full hover:bg-slate-400 p-1 text-center text-base">
+                                                                        Dropwdown
+                                                                        Link 1
+                                                                    </div>
+                                                                    <div className="w-full hover:bg-slate-400 p-1 text-center text-base">
+                                                                        Dropwdown
+                                                                        Link 2
+                                                                    </div>
+                                                                    <div className="w-full hover:bg-slate-400 p-1 text-center text-base">
+                                                                        Dropwdown
+                                                                        Link 3
+                                                                    </div>
+                                                                </div>
                                                             </Link>
                                                         )}
                                                     </Menu.Item>

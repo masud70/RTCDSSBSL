@@ -4,7 +4,7 @@ const path = require('path');
 const nextConfig = {
     reactStrictMode: true,
     env: {
-        BASE_URL: 'http://192.168.0.200:5000',
+        BASE_URL: 'http://localhost:5000',
         ACCESS_TOKEN: 'rtcdssbsl_token'
     },
     sassOptions: {

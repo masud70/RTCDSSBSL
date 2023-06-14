@@ -135,11 +135,21 @@ function Index({ data }) {
                                         <div className="w-[30px]">
                                             <img
                                                 className="inline-block h-6 w-6 rounded-full ring-2 ring-white"
-                                                src="http://192.168.0.200:5000/uploads/images/profile.png"
+                                                src={
+                                                    item.User
+                                                        ? item.User.avatar
+                                                        : 'http://localhost:5000/uploads/images/profile.png'
+                                                }
                                                 alt="User"
                                             />
                                         </div>
                                         <div className="w-full">
+                                            <span className='font-bold'>
+                                                {item.User
+                                                    ? item.User.nameEn
+                                                    : 'Unknown user'}
+                                            </span>
+                                            <br className="p-0 m-0" />
                                             {item.body}
                                             <br className="p-0 m-0" />
                                             <span className="text-[8px] text-gray-500">

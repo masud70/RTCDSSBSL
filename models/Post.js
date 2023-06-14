@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.TEXT,
             allowNull: false,
         },
-        time: {
+        time: {                            
             type: DataTypes.STRING,
             allowNull: false,
         },
