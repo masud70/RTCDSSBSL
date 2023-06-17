@@ -10,9 +10,13 @@
 
 The system enables administrators to maintain a centralize trainee database. It allows for the addition, updating, and deletion of trainee records, making it easy to store and retrieve essential trainee information such as personal details, contact information, and job positions.
 
+## Facial Authentication
+
+This Trainee Management System features a powerful Neural Authentication Module that utilizes advanced facial recognition technology. This cutting-edge feature allows trainees to securely log in to the system using their unique facial biometrics. By capturing and analyzing facial features, our system ensures accurate and reliable authentication, eliminating the need for traditional username-password combinations. This not only enhances security but also provides a seamless and user-friendly experience for trainees, making the authentication process quick and convenient.
+
 ### Training Management and Notifications
 
-The system includes functionality to manage trainee training programs. Administrators can add and update training information, including upcoming sessions and topics. The system also supports sending SMS notifications to trainees about upcoming training events, ensuring timely communication and participation.
+The system includes functionality to manage trainee training programs. Administrators can add and update training information, including upcoming sessions and topics. The system also supports sending **SMS and Email** notifications to trainees about upcoming training events, ensuring timely communication and participation.
 
 ### Trainee Data Printing
 
