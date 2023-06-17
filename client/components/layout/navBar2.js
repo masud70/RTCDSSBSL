@@ -8,6 +8,7 @@ import { logout } from '../../redux/state/authSlice';
 import { useQuery } from '@apollo/client';
 import { getCookie } from 'cookies-next';
 import { GET_USER_DATA } from '../graphql/query';
+import Head from 'next/head';
 
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ');
@@ -62,6 +63,15 @@ export default function Navbar2() {
             {({ open }) => (
                 <>
                     <div className="mx-auto max-w-full px-2 sm:px-6 lg:px-8">
+                        <Head>
+                            <link
+                                rel="shortcut icon"
+                                href={
+                                    process.env.BASE_URL +
+                                    '/uploads/images/dss-logo.jpg'
+                                }
+                            />
+                        </Head>
                         <div className="relative flex h-16 items-center justify-between">
                             <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
                                 {/* Mobile menu button*/}
@@ -86,13 +96,19 @@ export default function Navbar2() {
                                 <div className="flex flex-shrink-0 items-center">
                                     <img
                                         className="block h-8 w-auto lg:hidden"
-                                        src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
-                                        alt="Your Company"
+                                        src={
+                                            process.env.BASE_URL +
+                                            '/uploads/images/dss-logo.jpg'
+                                        }
+                                        alt="RTCDSSBSL"
                                     />
                                     <img
                                         className="hidden h-8 w-auto lg:block"
-                                        src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
-                                        alt="Your Company"
+                                        src={
+                                            process.env.BASE_URL +
+                                            '/uploads/images/dss-logo.jpg'
+                                        }
+                                        alt="RTCDSSBSL"
                                     />
                                 </div>
                                 <div className="hidden sm:ml-6 sm:block">

@@ -1,22 +1,22 @@
-# Employee Management System (RTCDSSBSL)
+# Trainee Management System with a Neural Authentication Module for RTC Barisal
 
-**The Employee Management System** is a web-based application designed to efficiently maintain an employee database and streamline various administrative tasks. This system provides a comprehensive set of features to manage employee information, training notifications, and facilitate effective communication within the organization.
+**The Trainee Management System** is a web-based application designed to efficiently maintain an trainee database and streamline various administrative tasks. This system provides a comprehensive set of features to manage trainee information, training notifications, and facilitate effective communication within the organization.
 
 ![Logo](https://github.com/masud70/RTCDSSBSL/blob/main/public/uploads/images/dss-logo.jpg?raw=true)
 
 ## Key Features
 
-### Employee Database Management
+### Trainee Database Management
 
-The system enables administrators to maintain a centralize employee database. It allows for the addition, updating, and deletion of employee records, making it easy to store and retrieve essential employee information such as personal details, contact information, and job positions.
+The system enables administrators to maintain a centralize trainee database. It allows for the addition, updating, and deletion of trainee records, making it easy to store and retrieve essential trainee information such as personal details, contact information, and job positions.
 
 ### Training Management and Notifications
 
-The system includes functionality to manage employee training programs. Administrators can add and update training information, including upcoming sessions and topics. The system also supports sending SMS notifications to employees about upcoming training events, ensuring timely communication and participation.
+The system includes functionality to manage trainee training programs. Administrators can add and update training information, including upcoming sessions and topics. The system also supports sending SMS notifications to trainees about upcoming training events, ensuring timely communication and participation.
 
-### Employee Data Printing
+### Trainee Data Printing
 
-With the employee data printing feature, administrators can generate printable reports or documents containing relevant employee information. This functionality facilitates record-keeping and provides a tangible resource for various administrative tasks, such as performance evaluations or compliance audits.
+With the trainee data printing feature, administrators can generate printable reports or documents containing relevant trainee information. This functionality facilitates record-keeping and provides a tangible resource for various administrative tasks, such as performance evaluations or compliance audits.
 
 ### Real-time Office Updates and Communication
 
@@ -24,7 +24,7 @@ The system includes a dedicated timeline section where authorized users, such as
 
 ## Installation and Setup
 
-To run the Employee Management System locally, follow these steps:
+To run the Trainee Management System locally, follow these steps:
 
 -   Clone the repository:
 
@@ -76,7 +76,7 @@ To run the Employee Management System locally, follow these steps:
     22. Application of `TailwindCSS`.
     23. Application of `Redux`.
     24. Application of `Express Validator`.
-    25. Application of `NodeMailer` for sending Gmail.
+    25. Application of `NodeMailer` for sending Email.
 
 ## Tech Stack
 
